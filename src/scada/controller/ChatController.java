@@ -31,6 +31,7 @@ public class ChatController {
 
 		iniciaHashChat(destinatario);
 
+		//
 		// VERIFICAR SE CLIENTE É IGUAL AO CLIENTE LOGADO
 
 		chat.get(destinatario).add(new ChatAuxiliar(remetente, mensagem));
