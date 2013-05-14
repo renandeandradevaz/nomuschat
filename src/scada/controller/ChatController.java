@@ -7,6 +7,7 @@ import java.util.List;
 import scada.anotacoes.Funcionalidade;
 import scada.auxiliar.ChatAuxiliar;
 import scada.hibernate.HibernateUtil;
+import scada.sessao.SessaoOperador;
 import scada.util.Util;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -18,10 +19,12 @@ public class ChatController {
 	public static HashMap<String, List<ChatAuxiliar>> chat;
 	private final Result result;
 	private HibernateUtil hibernateUtil;
+	private SessaoOperador sessaoOperador;
 
-	public ChatController(Result result, HibernateUtil hibernateUtil) {
+	public ChatController(Result result, HibernateUtil hibernateUtil, SessaoOperador sessaoOperador) {
 
 		this.result = result;
+		this.sessaoOperador = sessaoOperador;
 		this.hibernateUtil = hibernateUtil;
 		this.hibernateUtil.setResult(result);
 	}
@@ -31,11 +34,12 @@ public class ChatController {
 
 		iniciaHashChat(destinatario);
 
-		// VERIFICAR SE CLIENTE É IGUAL AO CLIENTE LOGADO
+		if (remetente.equals(this.sessaoOperador.getOperador().getLogin())) {
 
-		chat.get(destinatario).add(new ChatAuxiliar(remetente, mensagem));
+			chat.get(destinatario).add(new ChatAuxiliar(remetente, mensagem));
 
-		result.use(Results.jsonp()).withCallback("jsonpCallback").from("ok").serialize();
+			result.use(Results.jsonp()).withCallback("jsonpCallback").from("ok").serialize();
+		}
 	}
 
 	@Funcionalidade(nome = "Verifica a existência de novas mensagens")
@@ -48,12 +52,15 @@ public class ChatController {
 
 		iniciaHashChat(cliente);
 
-		// VERIFICAR SE CLIENTE É IGUAL AO CLIENTE LOGADO
+		if (cliente.equals(this.sessaoOperador.getOperador().getLogin())) {
 
-		result.use(Results.jsonp()).withCallback("jsonpCallback").from(chat.get(cliente)).serialize();
+			result.use(Results.jsonp()).withCallback("jsonpCallback").from(chat.get(cliente)).serialize();
 
-		chat.get(cliente).clear();
+			chat.get(cliente).clear();
+		}
 	}
+
+	
 
 	private void iniciaHashChat(String destinatario) {
 
