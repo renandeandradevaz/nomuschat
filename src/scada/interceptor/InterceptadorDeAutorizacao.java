@@ -52,20 +52,6 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 			String login = request.getParameter("login");
 			String senha = request.getParameter("senha");
 
-			if (usuariosLogados == null) {
-
-				usuariosLogados = new HashMap<String, String>();
-			}
-
-			if (usuariosLogados.containsKey(login)) {
-
-				if (usuariosLogados.get(login).equals(senha)) {
-
-					stack.next(method, resourceInstance);
-					return;
-				}
-			}
-
 			Operador operador = new Operador();
 			operador.setLogin(login);
 			operador.setSenha(senha);
@@ -84,7 +70,13 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 				else {
 
 					sessaoOperador.login(operador);
-					usuariosLogados.put(operador.getLogin(), operador.getSenha());
+
+					if (usuariosLogados == null) {
+
+						usuariosLogados = new HashMap<String, String>();
+					}
+
+					usuariosLogados.put(operador.getLogin(), "");
 					stack.next(method, resourceInstance);
 				}
 			}
