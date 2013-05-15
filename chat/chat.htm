@@ -43,7 +43,7 @@
     jQuery(document).ready(function(){
  
       login = 'renan';
-
+      
       var broadcastMessageCallback = function(from, msg) {
           
       jQuery("#chat"+from).chatbox("option", "boxManager").addMsg(login, msg);
@@ -60,13 +60,12 @@
 		    });
       }
 
-
 		chatboxManager.init({messageSent : broadcastMessageCallback});
 
 		exibirUsuariosLogados();
-		
-		setInterval(verificaExistenciaNovasMensagens, 5000);
-		setInterval(exibirUsuariosLogados, 10000);
+
+		setInterval(verificaExistenciaNovasMensagens, 10000);
+		setInterval(exibirUsuariosLogados, 60000);
 
 		function verificaExistenciaNovasMensagens(){
 		
@@ -107,7 +106,7 @@
 
 		 	    	});
 		        }
-		    });
+		    });	    
 		}
 		
 		jQuery(document).on('click', '#usuariosLogados li', function(){  
@@ -116,7 +115,7 @@
 			
 			chatboxManager.addBox("chat"+remetente, {dest: remetente, title: remetente , first_name: remetente, last_name: '' });
 		});
-		
+
 	});
  </script>
  
@@ -126,8 +125,6 @@
   		<h5> Usuários online </h5>  
   		<ul> </ul>	
   	</div>
-  
-	<div id='chat_div' >  </div>
 
  </body>
 </html>
