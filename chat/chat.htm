@@ -46,7 +46,7 @@
 
       var broadcastMessageCallback = function(from, msg) {
           
-      jQuery("#"+from).chatbox("option", "boxManager").addMsg(cliente, msg);
+      jQuery("#chat"+from).chatbox("option", "boxManager").addMsg(cliente, msg);
 
 		jQuery.ajax({ 
 		        type: 'GET',
@@ -77,8 +77,8 @@
 		        success: function(data) { 
 		            jQuery.each(data.list, function(i, item){
 
-		               chatboxManager.addBox(item.remetente, {dest: item.remetente, title: item.remetente , first_name: item.remetente, last_name: '' });
-		               jQuery("#"+item.remetente).chatbox("option", "boxManager").addMsg(item.remetente, item.mensagem);
+		               chatboxManager.addBox("chat"+item.remetente, {dest: item.remetente, title: item.remetente , first_name: item.remetente, last_name: '' });
+		               jQuery("#chat"+item.remetente).chatbox("option", "boxManager").addMsg(item.remetente, item.mensagem);
 
 		 	    	});
 		        }
@@ -112,7 +112,7 @@
 			
 			var remetente = jQuery(this).attr("id");
 			
-			chatboxManager.addBox(remetente, {dest: remetente, title: remetente , first_name: remetente, last_name: '' });
+			chatboxManager.addBox("chat"+remetente, {dest: remetente, title: remetente , first_name: remetente, last_name: '' });
 		});
 		
 	});
