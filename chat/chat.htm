@@ -43,6 +43,7 @@
     jQuery(document).ready(function(){
  
       login = 'renan';
+      senha = 'teste';
       
       var broadcastMessageCallback = function(from, msg) {
           
@@ -50,7 +51,7 @@
 
 		jQuery.ajax({ 
 		        type: 'GET',
-		        url: "http://localhost:8080/nomuschat/chat/recebeMensagem?remetente=" + login + "&destinatario=" + from + "&mensagem="+ msg + "&login=" + login + "&senha=teste" ,
+		        url: "http://localhost:8080/nomuschat/chat/recebeMensagem?remetente=" + login + "&destinatario=" + from + "&mensagem="+ msg + "&login=" + login + "&senha=" + senha ,
 		        dataType: 'jsonp', 
 		        jsonp: false,
 				jsonpCallback: "jsonMensagemEnviada",
@@ -71,7 +72,7 @@
 		
 		    jQuery.ajax({ 
 		        type: 'GET',
-		        url: "http://localhost:8080/nomuschat/chat/verificaExistenciaNovasMensagens?login=" + login + "&senha=teste" ,
+		        url: "http://localhost:8080/nomuschat/chat/verificaExistenciaNovasMensagens?login=" + login + "&senha=" + senha ,
 		        dataType: 'jsonp', 
 		        jsonp: false,
 				jsonpCallback: "jsonVerificacaoExistenciaNovasMensagens",
@@ -90,7 +91,7 @@
 			
 		    jQuery.ajax({ 
 		        type: 'GET',
-		        url: "http://localhost:8080/nomuschat/chat/exibirUsuariosLogados?login=" + login + "&senha=teste" ,
+		        url: "http://localhost:8080/nomuschat/chat/exibirUsuariosLogados?login=" + login + "&senha=" + senha ,
 		        dataType: 'jsonp', 
 		        jsonp: false,
 			    jsonpCallback: "jsonUsuariosLogados",

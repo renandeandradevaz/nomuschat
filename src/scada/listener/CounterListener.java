@@ -4,6 +4,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import scada.interceptor.InterceptadorDeAutorizacao;
+import scada.sessao.SessaoOperador;
+import scada.util.Util;
+
 public final class CounterListener implements HttpSessionListener {
 	private int count = 1;
 	private ServletContext context = null;
@@ -15,6 +19,14 @@ public final class CounterListener implements HttpSessionListener {
 	}
 
 	public synchronized void sessionDestroyed(HttpSessionEvent se) {
+
+		if (Util.preenchido(se.getSession().getAttribute("sessaoOperador")) && se.getSession().getAttribute("sessaoOperador") instanceof SessaoOperador) {
+
+			SessaoOperador sessaoOperador = (SessaoOperador) se.getSession().getAttribute("sessaoOperador");
+
+			InterceptadorDeAutorizacao.getUsuariosLogados().remove(sessaoOperador.getOperador().getLogin());
+		}
+
 		count--;
 		log("sessionDestroyed(" + se.getSession().getId() + ") count=" + count);
 		se.getSession().setAttribute("count", new Integer(count));
