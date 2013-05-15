@@ -8,6 +8,9 @@
   <listener>
      <listener-class>scada.listener.CounterListener</listener-class>
   </listener>
+  <session-config>  
+   <session-timeout>1</session-timeout>
+   </session-config>  
   <filter-mapping>
     <filter-name>vraptor</filter-name>
     <url-pattern>/*</url-pattern>

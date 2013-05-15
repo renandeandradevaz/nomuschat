@@ -50,7 +50,7 @@
 
 		jQuery.ajax({ 
 		        type: 'GET',
-		        url: "http://localhost:8080/nomuschat/chat/recebeMensagem?remetente=" + login + "&destinatario=" + from + "&mensagem="+ msg ,
+		        url: "http://localhost:8080/nomuschat/chat/recebeMensagem?remetente=" + login + "&destinatario=" + from + "&mensagem="+ msg + "&login=" + login + "&senha=teste" ,
 		        dataType: 'jsonp', 
 		        jsonp: false,
 				jsonpCallback: "jsonMensagemEnviada",
