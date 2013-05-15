@@ -32,7 +32,7 @@ public class ChatController {
 
 	@Funcionalidade(nome = "Recebe a mensagem do cliente e salva na variável")
 	public void recebeMensagem(String remetente, String destinatario, String mensagem) {
-		
+
 		System.out.println(mensagem);
 
 		iniciaHashChat(destinatario);
@@ -46,15 +46,15 @@ public class ChatController {
 	}
 
 	@Funcionalidade(nome = "Verifica a existência de novas mensagens")
-	public void verificaExistenciaNovasMensagens(String cliente) {
+	public void verificaExistenciaNovasMensagens(String login) {
 
-		iniciaHashChat(cliente);
+		iniciaHashChat(login);
 
-		if (cliente.equals(this.sessaoOperador.getOperador().getLogin())) {
+		if (login.equals(this.sessaoOperador.getOperador().getLogin())) {
 
-			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagens").from(chat.get(cliente)).serialize();
+			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagens").from(chat.get(login)).serialize();
 
-			chat.get(cliente).clear();
+			chat.get(login).clear();
 		}
 	}
 
