@@ -63,8 +63,6 @@
 
 		chatboxManager.init({messageSent : broadcastMessageCallback});
 
-		verificaExistenciaNovasMensagens();
-		exibirUsuariosLogados();
 		setInterval(verificaExistenciaNovasMensagens, 5000);
 		setInterval(exibirUsuariosLogados, 10000);
 
@@ -75,7 +73,7 @@
 		        url: "http://localhost:8080/nomuschat/chat/verificaExistenciaNovasMensagens?cliente=" + cliente + "&login=" + cliente + "&senha=teste" ,
 		        dataType: 'jsonp', 
 		        jsonp: false,
-			jsonpCallback: "jsonVerificacaoExistenciaNovasMensagens",
+				jsonpCallback: "jsonVerificacaoExistenciaNovasMensagens",
 		        success: function(data) { 
 		            jQuery.each(data.list, function(i, item){
 
