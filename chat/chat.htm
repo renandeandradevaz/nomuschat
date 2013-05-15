@@ -1,74 +1,133 @@
 
-<html>
-    <link rel="stylesheet" href="./chat/jquery-ui-1.9.2.custom.min.css">
-    <script type="text/javascript" src="./chat/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="./chat/jquery-ui-1.9.2.custom.min.js"></script>
-    <link type="text/css" href="./chat/jquery.ui.chatbox.css" rel="stylesheet">
-    <script type="text/javascript" src="./chat/jquery.ui.chatbox.js"></script>
-    <script type="text/javascript" src="./chat/chatboxManager.js"></script>
+<!DOCTYPE HTML>
+<html lang="pt-br">
+	<head>
+		<meta charset='utf-8'> 
+	    <link rel="stylesheet" href="./chat/jquery-ui-1.9.2.custom.min.css">
+	    <script type="text/javascript" src="./chat/jquery-1.9.1.js"></script>
+	    <script type="text/javascript" src="./chat/jquery-ui-1.9.2.custom.min.js"></script>
+	    <link type="text/css" href="./chat/jquery.ui.chatbox.css" rel="stylesheet">
+	    <script type="text/javascript" src="./chat/jquery.ui.chatbox.js"></script>
+	    <script type="text/javascript" src="./chat/chatboxManager.js"></script>
+	</head>
+	
+	<style>
+	
+		#usuariosLogados{
+		
+			border: 1px solid #CCC;
+			width: 300px;
+			border-radius: 5px;
+		}
+		
+		#usuariosLogados h5{
+		
+			text-align: center;
+		}
+		
+		#usuariosLogados li{
+		
+			list-style-type: none;
+			cursor: pointer;
+		}
+		#usuariosLogados li:hover{
+		
+			color: blue;
+			text-decoration: underline;
+		}
+	
+	</style>
     
     <script type="text/javascript">
 
-
-
-jQuery(document).ready(function(){
+    jQuery(document).ready(function(){
  
       cliente = 'renan';
 
       var broadcastMessageCallback = function(from, msg) {
           
-        jQuery("#"+from).chatbox("option", "boxManager").addMsg(cliente, msg);
+      jQuery("#"+from).chatbox("option", "boxManager").addMsg(cliente, msg);
 
-
-jQuery.ajax({ 
-        type: 'GET',
-        url: "http://localhost:8080/nomuschat/chat/recebeMensagem?remetente=" + cliente + "&destinatario=" + from + "&mensagem="+ msg ,
-        dataType: 'jsonp', 
-        jsonp: false,
-	jsonpCallback: "jsonpCallback",
-        success: function(data) { 
-            console.log(data);
-        }
-    });
-
-
-
+		jQuery.ajax({ 
+		        type: 'GET',
+		        url: "http://localhost:8080/nomuschat/chat/recebeMensagem?remetente=" + cliente + "&destinatario=" + from + "&mensagem="+ msg ,
+		        dataType: 'jsonp', 
+		        jsonp: false,
+				jsonpCallback: "jsonMensagemEnviada",
+		        success: function(data) { 
+		            //console.log(data);
+		        }
+		    });
       }
 
 
-      chatboxManager.init({messageSent : broadcastMessageCallback});
+		chatboxManager.init({messageSent : broadcastMessageCallback});
 
+		verificaExistenciaNovasMensagens();
+		exibirUsuariosLogados();
+		setInterval(verificaExistenciaNovasMensagens, 5000);
+		setInterval(exibirUsuariosLogados, 10000);
 
-setInterval(verificaExistenciaNovasMensagens, 5000);
+		function verificaExistenciaNovasMensagens(){
+		
+		    jQuery.ajax({ 
+		        type: 'GET',
+		        url: "http://localhost:8080/nomuschat/chat/verificaExistenciaNovasMensagens?cliente=" + cliente + "&login=" + cliente + "&senha=teste" ,
+		        dataType: 'jsonp', 
+		        jsonp: false,
+			jsonpCallback: "jsonVerificacaoExistenciaNovasMensagens",
+		        success: function(data) { 
+		            jQuery.each(data.list, function(i, item){
 
+		               chatboxManager.addBox(item.remetente, {dest: item.remetente, title: item.remetente , first_name: item.remetente, last_name: '' });
+		               jQuery("#"+item.remetente).chatbox("option", "boxManager").addMsg(item.remetente, item.mensagem);
 
-function verificaExistenciaNovasMensagens(){
+		 	    	});
+		        }
+		    });
+		}
+		
+		function exibirUsuariosLogados(){
+			
+		    jQuery.ajax({ 
+		        type: 'GET',
+		        url: "http://localhost:8080/nomuschat/chat/exibirUsuariosLogados" ,
+		        dataType: 'jsonp', 
+		        jsonp: false,
+			    jsonpCallback: "jsonUsuariosLogados",
+		        success: function(data) { 
+		        	
+		        	jQuery("#usuariosLogados ul").empty();
+		        	
+		            jQuery.each(data.list, function(i, item){
 
-    jQuery.ajax({ 
-        type: 'GET',
-        url: "http://localhost:8080/nomuschat/chat/verificaExistenciaNovasMensagens?cliente=" + cliente + "&login=" + cliente + "&senha=teste" ,
-        dataType: 'jsonp', 
-        jsonp: false,
-	jsonpCallback: "jsonpCallback",
-        success: function(data) { 
-            jQuery.each(data.list, function(i, item){
+		               jQuery("#usuariosLogados ul").append("<li>");
+		               jQuery("#usuariosLogados li:last").attr("id", item);
+		               jQuery("#usuariosLogados li:last").append(item);
 
-
-               chatboxManager.addBox(item.remetente, {dest: item.remetente, title: item.remetente , first_name: item.remetente, last_name: '' });
-               jQuery("#"+item.remetente).chatbox("option", "boxManager").addMsg(item.remetente, item.mensagem);
-
-
- 	    });
-        }
-    });
-}
-
-});
+		 	    	});
+		        }
+		    });
+		}
+		
+		jQuery(document).on('click', '#usuariosLogados li', function(){  
+			
+			var remetente = jQuery(this).attr("id");
+			
+			chatboxManager.addBox(remetente, {dest: remetente, title: remetente , first_name: remetente, last_name: '' });
+		});
+		
+	});
  </script>
-  </head>
+ 
   <body>
   
-<div id='chat_div' >  </div>
+  	<div id='usuariosLogados'>
+  		<h5> Usuários online </h5>  
+  		<ul> </ul>	
+  	</div>
+  
+	<div id='chat_div' >  </div>
 
-
-</body></html>
+ </body>
+</html>

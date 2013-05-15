@@ -95,4 +95,8 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 			stack.next(method, resourceInstance);
 		}
 	}
+
+	public static HashMap<String, String> getUsuariosLogados() {
+		return usuariosLogados;
+	}
 }
