@@ -60,7 +60,7 @@ public class HibernateUtil {
 			session.close();
 		}
 
-		gerarEstatisticas();
+		//gerarEstatisticas();
 	}
 
 	public void salvarOuAtualizar(Entidade entidade) {

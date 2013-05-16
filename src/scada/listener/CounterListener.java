@@ -24,7 +24,11 @@ public final class CounterListener implements HttpSessionListener {
 
 			SessaoOperador sessaoOperador = (SessaoOperador) se.getSession().getAttribute("sessaoOperador");
 
-			InterceptadorDeAutorizacao.getUsuariosLogados().remove(sessaoOperador.getOperador().getLogin());
+			if (Util.preenchido(InterceptadorDeAutorizacao.getUsuariosLogados()) && Util.preenchido(sessaoOperador) && Util.preenchido(sessaoOperador.getOperador()) && Util.preenchido(sessaoOperador.getOperador().getLogin())) {
+
+				InterceptadorDeAutorizacao.getUsuariosLogados().remove(sessaoOperador.getOperador().getLogin());
+			}
+
 		}
 
 		count--;
