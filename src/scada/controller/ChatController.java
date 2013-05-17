@@ -33,8 +33,6 @@ public class ChatController {
 	@Funcionalidade(nome = "Recebe a mensagem do cliente e salva na variável")
 	public void recebeMensagem(String remetente, String destinatario, String mensagem) {
 
-		System.out.println(mensagem);
-
 		iniciaHashChat(destinatario);
 
 		if (remetente.equals(this.sessaoOperador.getOperador().getLogin())) {

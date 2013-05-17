@@ -97,6 +97,12 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 	}
 
 	public static HashMap<String, String> getUsuariosLogados() {
+
+		if (usuariosLogados == null) {
+
+			usuariosLogados = new HashMap<String, String>();
+		}
+
 		return usuariosLogados;
 	}
 }

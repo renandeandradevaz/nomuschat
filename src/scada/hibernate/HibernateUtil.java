@@ -30,6 +30,9 @@ public class HibernateUtil {
 	private Session session;
 	private Result result;
 
+	private static long quantidadeSessoesAbertasHibernate;
+	private static long quantidadeSessoesFechadasHibernate;
+
 	public HibernateUtil(Session session, Result result) {
 
 		this.result = result;
@@ -59,8 +62,6 @@ public class HibernateUtil {
 
 			session.close();
 		}
-
-		//gerarEstatisticas();
 	}
 
 	public void salvarOuAtualizar(Entidade entidade) {
@@ -178,13 +179,18 @@ public class HibernateUtil {
 
 	}
 
-	private void gerarEstatisticas() {
+	public static void gerarEstatisticas() {
 
-		if (!sessionFactory.getStatistics().isStatisticsEnabled()) {
-			sessionFactory.getStatistics().setStatisticsEnabled(true);
+		if (Util.preenchido(sessionFactory)) {
+
+			if (!sessionFactory.getStatistics().isStatisticsEnabled()) {
+				sessionFactory.getStatistics().setStatisticsEnabled(true);
+			}
+
+			quantidadeSessoesAbertasHibernate = sessionFactory.getStatistics().getSessionOpenCount();
+			quantidadeSessoesFechadasHibernate = sessionFactory.getStatistics().getSessionCloseCount();
 		}
-		System.out.println("Quantidade de sessões abertas: " + sessionFactory.getStatistics().getSessionOpenCount());
-		System.out.println("Quantidade de sessões fechadas: " + sessionFactory.getStatistics().getSessionCloseCount());
+
 	}
 
 	public <E extends Entidade> List<E> buscar(Entidade filtro) {
@@ -491,5 +497,13 @@ public class HibernateUtil {
 
 	public void setResult(Result result) {
 		this.result = result;
+	}
+
+	public static long getQuantidadeSessoesAbertasHibernate() {
+		return quantidadeSessoesAbertasHibernate;
+	}
+
+	public static long getQuantidadeSessoesFechadasHibernate() {
+		return quantidadeSessoesFechadasHibernate;
 	}
 }

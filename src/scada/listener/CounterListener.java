@@ -9,7 +9,8 @@ import scada.sessao.SessaoOperador;
 import scada.util.Util;
 
 public final class CounterListener implements HttpSessionListener {
-	private int count = 1;
+
+	private static int count = 1;
 	private ServletContext context = null;
 
 	public synchronized void sessionCreated(HttpSessionEvent se) {
@@ -36,8 +37,8 @@ public final class CounterListener implements HttpSessionListener {
 		se.getSession().setAttribute("count", new Integer(count));
 	}
 
-	public int getCount() {
-		return this.count;
+	public static int getCount() {
+		return count;
 	}
 
 	public void addCount() {
