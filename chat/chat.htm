@@ -67,8 +67,8 @@
 	
 			exibirUsuariosLogados();
 	
-			setInterval(verificaExistenciaNovasMensagens, 10000);
-			setInterval(exibirUsuariosLogados, 20000);
+			intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 1000);
+			setInterval(exibirUsuariosLogados, 30000);
 
 			jQuery(document).on('click', '#usuariosLogados li', function(){  
 				
@@ -125,6 +125,28 @@
 	 	    	});
 	        }
 	    });
+	    
+	    var existePeloMenosUmChatAberto = false;
+	    
+	    jQuery(".ui-chatbox").each(function(){
+	    	
+	    	if(jQuery(this).css("display") == "block"){
+	    		
+	    		existePeloMenosUmChatAberto = true;
+	    		return;
+	    	}	    	
+	    });
+	    
+	    clearInterval(intervaloVerificacaoExistenciaNovasMensagens);
+	    
+	    if(existePeloMenosUmChatAberto){
+	    	
+		    intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 1000);
+	    }
+	    else{
+	    	
+	    	intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 10000);
+	    }	    
 	}
     
     
