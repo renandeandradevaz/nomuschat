@@ -57,13 +57,21 @@ public class ChatController {
 	}
 
 	@Funcionalidade(nome = "")
-	public void exibirUsuariosLogados() {
+	public void exibirUsuariosLogados(String login) {
+
+		if (!InterceptadorDeAutorizacao.getUsuariosLogados().containsKey(login)) {
+
+			InterceptadorDeAutorizacao.getUsuariosLogados().put(login, "");
+		}
 
 		List<String> usuariosLogados = new ArrayList<String>();
 
 		for (Entry<String, String> usuarioLogado : InterceptadorDeAutorizacao.getUsuariosLogados().entrySet()) {
 
-			usuariosLogados.add(usuarioLogado.getKey());
+			if (!usuarioLogado.getKey().equals(login)) {
+
+				usuariosLogados.add(usuarioLogado.getKey());
+			}
 		}
 
 		result.use(Results.jsonp()).withCallback("jsonUsuariosLogados").from(usuariosLogados).serialize();
