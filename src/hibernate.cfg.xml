@@ -17,6 +17,7 @@
       
       <mapping class="scada.modelo.Operador" />
       <mapping class="scada.modelo.Empresa" />
+      <mapping class="scada.modelo.Configuracao" />
 
 </session-factory>
 </hibernate-configuration>
