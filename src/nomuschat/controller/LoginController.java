@@ -231,10 +231,10 @@ public class LoginController {
 
 		if (InterceptadorDeAutorizacao.getUsuariosLogados() == null) {
 
-			InterceptadorDeAutorizacao.setUsuariosLogados(new HashMap<String, String>());
+			InterceptadorDeAutorizacao.setUsuariosLogados(new HashMap<String, Usuario>());
 		}
 
-		InterceptadorDeAutorizacao.getUsuariosLogados().put(nomeEmpresa + "_" + usuarioLogado.getLogin(), "");
+		InterceptadorDeAutorizacao.getUsuariosLogados().put(usuarioLogado.getKeyEmpresaUsuario(), usuarioLogado);
 
 		result.redirectTo(HomeController.class).home();
 	}

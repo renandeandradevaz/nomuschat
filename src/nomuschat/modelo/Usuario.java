@@ -40,6 +40,11 @@ public class Usuario implements Entidade {
 		this.setId(id);
 	}
 
+	public String getKeyEmpresaUsuario() {
+
+		return this.empresa.getNome() + "_" + this.getLogin();
+	}
+
 	public String getLogin() {
 		return login;
 	}

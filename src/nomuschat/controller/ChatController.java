@@ -9,6 +9,7 @@ import nomuschat.anotacoes.Funcionalidade;
 import nomuschat.auxiliar.ChatAuxiliar;
 import nomuschat.hibernate.HibernateUtil;
 import nomuschat.interceptor.InterceptadorDeAutorizacao;
+import nomuschat.modelo.Usuario;
 import nomuschat.sessao.SessaoUsuario;
 import nomuschat.util.Util;
 import br.com.caelum.vraptor.Resource;
@@ -37,81 +38,74 @@ public class ChatController {
 	}
 
 	@Funcionalidade
-	public void recebeMensagem(String remetente, String destinatario, String mensagem) {
+	public void recebeMensagem(String destinatario, String mensagem) {
 
-		iniciaHashChat(destinatario);
+		iniciaHashChat();
 
-		if (remetente.equals(this.sessaoUsuario.getUsuario().getLogin())) {
+		chat.get(destinatario).add(new ChatAuxiliar(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario(), mensagem));
 
-			chat.get(destinatario).add(new ChatAuxiliar(remetente, mensagem));
-
-			result.use(Results.jsonp()).withCallback("jsonMensagemEnviada").from("ok").serialize();
-		}
+		result.use(Results.jsonp()).withCallback("jsonMensagemEnviada").from("ok").serialize();
 	}
 
 	@Funcionalidade
-	public void verificaExistenciaNovasMensagens(String loginNomusChat) {
+	public void verificaExistenciaNovasMensagens() {
 
-		iniciaHashChat(loginNomusChat);
+		iniciaHashChat();
 
-		if (loginNomusChat.equals(this.sessaoUsuario.getUsuario().getLogin())) {
+		result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagens").from(chat.get(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario())).serialize();
 
-			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagens").from(chat.get(loginNomusChat)).serialize();
+		chat.get(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario()).clear();
 
-			chat.get(loginNomusChat).clear();
-		}
 	}
 
 	@Funcionalidade
-	public void verificaExistenciaNovasMensagensSemDevolverJsonComMensagens(String loginNomusChat) {
+	public void verificaExistenciaNovasMensagensSemDevolverJsonComMensagens() {
 
-		iniciaHashChat(loginNomusChat);
+		iniciaHashChat();
 
-		if (loginNomusChat.equals(this.sessaoUsuario.getUsuario().getLogin())) {
+		if (Util.preenchido(chat.get(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario()))) {
 
-			if (Util.preenchido(chat.get(loginNomusChat))) {
-
-				result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagensSemDevolverJsonComMensagens").from(true).serialize();
-			}
-
-			else {
-
-				result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagensSemDevolverJsonComMensagens").from(true).serialize();
-			}
+			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagensSemDevolverJsonComMensagens").from(true).serialize();
 		}
+
+		else {
+
+			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagensSemDevolverJsonComMensagens").from(true).serialize();
+		}
+
 	}
 
 	@Funcionalidade
-	public void exibirUsuariosLogados(String loginNomusChat, String empresa) {
+	public void exibirUsuariosLogados() {
 
-		if (!InterceptadorDeAutorizacao.getUsuariosLogados().containsKey(loginNomusChat)) {
+		if (!InterceptadorDeAutorizacao.getUsuariosLogados().containsKey(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario())) {
 
-			InterceptadorDeAutorizacao.getUsuariosLogados().put(empresa + "_" + loginNomusChat, "");
+			InterceptadorDeAutorizacao.getUsuariosLogados().put(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario(), this.sessaoUsuario.getUsuario());
 		}
 
-		List<String> usuariosLogados = new ArrayList<String>();
+		List<Usuario> usuariosLogados = new ArrayList<Usuario>();
 
-		for (Entry<String, String> usuarioLogado : InterceptadorDeAutorizacao.getUsuariosLogados().entrySet()) {
+		for (Entry<String, Usuario> usuarioLogado : InterceptadorDeAutorizacao.getUsuariosLogados().entrySet()) {
 
-			if (!usuarioLogado.getKey().equals(loginNomusChat)) {
+			if (!usuarioLogado.getKey().equals(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario())) {
 
-				usuariosLogados.add(usuarioLogado.getKey());
+				usuariosLogados.add(usuarioLogado.getValue());
 			}
 		}
 
-		result.use(Results.jsonp()).withCallback("jsonUsuariosLogados").from(usuariosLogados).serialize();
+		result.use(Results.jsonp()).withCallback("jsonUsuariosLogados").from(usuariosLogados).include("empresa").serialize();
 	}
 
-	private void iniciaHashChat(String destinatario) {
+	private void iniciaHashChat() {
 
 		if (chat == null) {
 
 			chat = new HashMap<String, List<ChatAuxiliar>>();
 		}
 
-		if (!chat.containsKey(destinatario)) {
+		if (!chat.containsKey(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario())) {
 
-			chat.put(destinatario, new ArrayList<ChatAuxiliar>());
+			chat.put(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario(), new ArrayList<ChatAuxiliar>());
 		}
 	}
 

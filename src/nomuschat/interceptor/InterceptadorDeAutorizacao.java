@@ -32,7 +32,7 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 	private Result result;
 	private HttpServletRequest request;
 	private HibernateUtil hibernateUtil;
-	private static HashMap<String, String> usuariosLogados;
+	private static HashMap<String, Usuario> usuariosLogados;
 
 	public InterceptadorDeAutorizacao(SessaoUsuario sessaoUsuario, Result result, HttpServletRequest request, HibernateUtil hibernateUtil) {
 		this.sessaoUsuario = sessaoUsuario;
@@ -118,10 +118,10 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 
 			if (usuariosLogados == null) {
 
-				usuariosLogados = new HashMap<String, String>();
+				usuariosLogados = new HashMap<String, Usuario>();
 			}
 
-			usuariosLogados.put(nomeEmpresa + "_" + usuarioLogado.getLogin(), "");
+			usuariosLogados.put(usuarioLogado.getKeyEmpresaUsuario(), usuarioLogado);
 
 			if (possuiPermissao(stack, method, resourceInstance, usuarioLogado)) {
 
@@ -190,18 +190,18 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 		result.redirectTo(LoginController.class).permissaoNegada();
 	}
 
-	public static HashMap<String, String> getUsuariosLogados() {
+	public static HashMap<String, Usuario> getUsuariosLogados() {
 
 		if (usuariosLogados == null) {
 
-			usuariosLogados = new HashMap<String, String>();
+			usuariosLogados = new HashMap<String, Usuario>();
 		}
 
 		return usuariosLogados;
 	}
 
-	public static void setUsuariosLogados(HashMap<String, String> usuariosLogados) {
-		
+	public static void setUsuariosLogados(HashMap<String, Usuario> usuariosLogados) {
+
 		InterceptadorDeAutorizacao.usuariosLogados = usuariosLogados;
 	}
 }
