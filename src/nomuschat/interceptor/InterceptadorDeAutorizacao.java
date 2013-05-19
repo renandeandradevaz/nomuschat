@@ -139,6 +139,9 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 					return false;
 				}
 			}
+
+			else
+				return true;
 		}
 
 		return false;
