@@ -2,15 +2,17 @@ package nomuschat.controller;
 
 import java.util.List;
 
-import org.hibernate.criterion.MatchMode;
-
 import nomuschat.anotacoes.Funcionalidade;
 import nomuschat.hibernate.HibernateUtil;
+import nomuschat.modelo.Empresa;
 import nomuschat.modelo.Usuario;
 import nomuschat.sessao.SessaoGeral;
 import nomuschat.util.GeradorDeMd5;
 import nomuschat.util.Util;
 import nomuschat.util.UtilController;
+
+import org.hibernate.criterion.MatchMode;
+
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -63,6 +65,7 @@ public class UsuarioController {
 	@Funcionalidade(administrativa = "true")
 	public void criarEditarUsuario() {
 
+		result.include("empresas", this.hibernateUtil.buscar(new Empresa()));
 	}
 
 	@Path("/usuario/excluirUsuario/{usuario.id}")

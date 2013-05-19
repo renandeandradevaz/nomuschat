@@ -5,14 +5,15 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.criterion.MatchMode;
-
 import nomuschat.anotacoes.Public;
 import nomuschat.controller.LoginController;
 import nomuschat.hibernate.HibernateUtil;
 import nomuschat.modelo.Usuario;
 import nomuschat.sessao.SessaoUsuario;
 import nomuschat.util.Util;
+
+import org.hibernate.criterion.MatchMode;
+
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.Result;
@@ -52,6 +53,12 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 			String login = request.getParameter("login");
 			String senha = request.getParameter("senha");
 
+			if (Util.vazio(login) || Util.vazio(senha)) {
+
+				usuarioNaoLogadoNoSistema();
+				return;
+			}
+
 			Usuario usuario = new Usuario();
 			usuario.setLogin(login);
 			usuario.setSenha(senha);
@@ -62,9 +69,7 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 
 				if (Util.vazio(usuario)) {
 
-					hibernateUtil.fecharSessao();
-					result.include("errors", Arrays.asList(new ValidationMessage("Login ou senha incorretos", "Erro")));
-					result.redirectTo(LoginController.class).telaLogin();
+					loginOuSenhaIncorretos();
 				}
 
 				else {
@@ -83,10 +88,7 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 
 			catch (Exception e) {
 
-				hibernateUtil.fecharSessao();
-
-				result.include("errors", Arrays.asList(new ValidationMessage("O usuario não está logado no sistema", "Erro")));
-				result.redirectTo(LoginController.class).telaLogin();
+				usuarioNaoLogadoNoSistema();
 			}
 		}
 
@@ -94,6 +96,21 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 
 			stack.next(method, resourceInstance);
 		}
+	}
+
+	private void usuarioNaoLogadoNoSistema() {
+
+		hibernateUtil.fecharSessao();
+
+		result.include("errors", Arrays.asList(new ValidationMessage("O usuario não está logado no sistema", "Erro")));
+		result.redirectTo(LoginController.class).telaLogin();
+	}
+
+	private void loginOuSenhaIncorretos() {
+
+		hibernateUtil.fecharSessao();
+		result.include("errors", Arrays.asList(new ValidationMessage("Login ou senha incorretos", "Erro")));
+		result.redirectTo(LoginController.class).telaLogin();
 	}
 
 	public static HashMap<String, String> getUsuariosLogados() {
