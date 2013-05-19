@@ -37,20 +37,14 @@
 			<div style="background: black; box-shadow: 5px 5px 10px grey;" >
 				<div id="menu">
 				    <ul class="menu">
-				        <li><a href="" class="parent"><span>Menu</span></a>
+				        <li>
+				        	<a href="" class="parent"><span>Menu</span></a>
 				            <ul>
-				            	<c:forEach var="modulo" items="${sessaoFuncionalidades.modulos}">
-						        	<li><a href="" class="parent"><span>${modulo.key}</span></a>
-			                            <ul>
-			                            	<c:forEach var="item" items="${modulo.value}">
-			                                	<li><a href="<c:url value="/${item.codigo}"/>"><span>${item.nomeFuncionalidade}</span></a></li>
-			                            	</c:forEach>
-			                            </ul>
-				                	</li>
-				            	</c:forEach>
+				            	<li><a href="<c:url value="/operador/listarOperadores"/>"><span> Usuários </span></a></li>
+				            	<li><a href="<c:url value="/empresa/listarEmpresas"/>"><span> Empresas </span></a></li>
+				            	<li><a href="<c:url value="/configuracao/configuracoes"/>"><span> Configurações </span></a></li>
 				            </ul>
-				        </li>
-				        <li><a href="<c:url value="/home/sobre"/>" class="last"><span>Sobre</span></a>	        
+				        </li>     
 				    </ul>
 				    <ul class="menu-operador" >
 				    	<li><span> Logado como: ${sessaoOperador.operador.postoGraduacao} ${sessaoOperador.operador.nome} &nbsp; </span> </li>
@@ -58,29 +52,10 @@
 				</div>
 			</div>
 			
-			<div id="esconder-menu" class="esconder-mostrar-menu">
-				<p> Esconder </p> 
-			</div>
-			
-			<div id="impressao">
-				<div id="icone-impressao">
-					<i class="icon-print"></i>
-				</div>
-				<div id="texto-imprimir">
-					<p> Imprimir </p>
-				</div>
-			</div>
-			
 			<a id="sair" style="float: right; padding-right: 15px; font-weight: bold; margin-top: 5px; font-size: 12px; cursor: pointer; " href="<c:url value="/login/logout"/>"> Sair </a>
 			<a style="float: right; padding-right: 15px; font-weight: bold; margin-top: 5px; font-size: 12px; cursor: pointer; " href="<c:url value="/login/trocarPropriaSenha"/>"> Trocar senha </a>
 		</div>		
 		
-		<!--
-		 Input hidden para guardar as informações das funcionalidades que o operador logado pode acessar.
-		Será usado para montar o submenu somente com as opções que o operador pode enxergar
-		 -->
-		<input id="codigosFuncionalidadesPermitidas" type="hidden" value="${sessaoFuncionalidades.codigosFuncionalidadesSeparadosPorVirgula}" >
-
 		<a style="display: none;" href="http://apycom.com/"></a>
 		
 		<div id="divconteudo" style="margin-left: 30px; margin-right: 30px; margin-bottom: 100px; margin-top: 75px;" >
