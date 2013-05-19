@@ -34,29 +34,62 @@ height: 250px;
 <div class='notificacao' > teste </div>
 
 <form id="formNomusChat" method="post" action="http://localhost:8080/nomuschat/login/loginVindoDoPCP" target="novaAbaNomusChat" style="display: none" >
-	<input type="hidden" name="loginNomusChat" value="renan" />
-	<input type="hidden" name="senhaNomusChat" value="1234" />
-	<input type="hidden" name="nomeNomusChat" value="Renan Vaz" />
-	<input type="hidden" name="nomeEmpresaNomusChat" value="Projetec" />
+	<input type="hidden" id='loginNomusChat' name="loginNomusChat" value="renan" />
+	<input type="hidden" id='senhaNomusChat' name="senhaNomusChat" value="1234" />
+	<input type="hidden" id="nomeNomusChat" name="nomeNomusChat" value="Renan Vaz" />
+	<input type="hidden" id="nomeEmpresaNomusChat" name="nomeEmpresaNomusChat" value="Projetec" />
+	<input type="hidden" id="enderecoNomusChat" name="enderecoNomusChat" value="http://localhost:8080/nomuschat" />
 </form>
 
-<script>
 
-notificacao();
+<script type="text/javascript">
 
-function notificacao(){
-
-jQuery("div.notificacao").animate({right:0,}, 500);
-//jQuery("div.notificacao").animate({right:-100,}, 500);
-
-}
-
-jQuery(".notificacao").click(function() {
+    jQuery(document).ready(function(){
+    	
+    	if(navigator.appName != 'Microsoft Internet Explorer'){
+    	
+    		loginNomusChat = jQuery("#loginNomusChat").val();
+    		senhaNomusChat = jQuery("#senhaNomusChat").val();
+    		nomeNomusChat = jQuery("#nomeNomusChat").val();
+    		nomeEmpresaNomusChat = jQuery("#nomeEmpresaNomusChat").val();
+    		enderecoNomusChat = jQuery("#enderecoNomusChat").val();
 	
-	  var formNomusChat = document.getElementById('formNomusChat');
-	  window.open('', 'novaAbaNomusChat');
-	  formNomusChat.submit();
-});
+			setTimeout(verificaExistenciaNovasMensagensSemDevolverJsonComMensagens, 2000);
+			setInterval(verificaExistenciaNovasMensagensSemDevolverJsonComMensagens, 60000);
+	    }
+    	
+    	jQuery(".notificacao").click(function() {
+    		
+    		jQuery("div.notificacao").animate({right:-100,}, 500);
+    		
+			var formNomusChat = document.getElementById('formNomusChat');
+			window.open('', 'novaAbaNomusChat');
+			formNomusChat.submit();
+    	});
+    	
+    });
+    
+    function verificaExistenciaNovasMensagensSemDevolverJsonComMensagens(){
+    	
+    	jQuery.ajax({ 
+	        type: 'GET',
+	        url: enderecoNomusChat + "/chat/verificaExistenciaNovasMensagensSemDevolverJsonComMensagens?loginNomusChat=" + loginNomusChat + "&senhaNomusChat="+ senhaNomusChat + "&nomeNomusChat="+ nomeNomusChat + "&nomeEmpresaNomusChat="+ nomeEmpresaNomusChat  ,
+	        dataType: 'jsonp', 
+	        jsonp: false,
+			jsonpCallback: "jsonVerificacaoExistenciaNovasMensagensSemDevolverJsonComMensagens",
+	        success: function(data) { 
+	        	
+	        	if(data.boolean){
+	        		
+	        		exibirNotificacaoNovaMensagem();	        		
+	        	}	        	
+	        }
+		});
+    }
+    
+    function exibirNotificacaoNovaMensagem(){
 
-
+    	jQuery("div.notificacao").animate({right:0,}, 500);
+    }
+    
 </script>

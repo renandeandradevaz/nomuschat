@@ -10,6 +10,7 @@ import nomuschat.auxiliar.ChatAuxiliar;
 import nomuschat.hibernate.HibernateUtil;
 import nomuschat.interceptor.InterceptadorDeAutorizacao;
 import nomuschat.sessao.SessaoUsuario;
+import nomuschat.util.Util;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -57,11 +58,30 @@ public class ChatController {
 	}
 
 	@Funcionalidade
-	public void exibirUsuariosLogados(String login) {
+	public void verificaExistenciaNovasMensagensSemDevolverJsonComMensagens(String loginNomusChat) {
+
+		iniciaHashChat(loginNomusChat);
+
+		if (loginNomusChat.equals(this.sessaoUsuario.getUsuario().getLogin())) {
+
+			if (Util.preenchido(chat.get(loginNomusChat))) {
+
+				result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagensSemDevolverJsonComMensagens").from(true).serialize();
+			}
+
+			else {
+
+				result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagensSemDevolverJsonComMensagens").from(true).serialize();
+			}
+		}
+	}
+
+	@Funcionalidade
+	public void exibirUsuariosLogados(String login, String empresa) {
 
 		if (!InterceptadorDeAutorizacao.getUsuariosLogados().containsKey(login)) {
 
-			InterceptadorDeAutorizacao.getUsuariosLogados().put(login, "");
+			InterceptadorDeAutorizacao.getUsuariosLogados().put(empresa + "_" + login, "");
 		}
 
 		List<String> usuariosLogados = new ArrayList<String>();
@@ -89,4 +109,5 @@ public class ChatController {
 			chat.put(destinatario, new ArrayList<ChatAuxiliar>());
 		}
 	}
+
 }
