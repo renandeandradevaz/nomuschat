@@ -25,13 +25,13 @@
     		nomeEmpresaNomusChat = jQuery("#nomeEmpresaNomusChat").val();
     		enderecoNomusChat = jQuery("#enderecoNomusChat").val();
 		    
-		    var broadcastMessageCallback = function(from, msg) {
+		    var broadcastMessageCallback = function(nomeDestinatario, codigoDestinatario, msg) {
 		        
-		    jQuery("#chat"+from).chatbox("option", "boxManager").addMsg(loginNomusChat, msg);
+		    jQuery("#chat"+codigoDestinatario).chatbox("option", "boxManager").addMsg(nomeDestinatario, msg);
 		
 				jQuery.ajax({ 
 			        type: 'GET',
-			        url: enderecoNomusChat + "/chat/recebeMensagem?loginNomusChat=" + loginNomusChat + "&senhaNomusChat="+ senhaNomusChat + "&nomeNomusChat="+ nomeNomusChat + "&nomeEmpresaNomusChat="+ nomeEmpresaNomusChat + "&destinatario=" + from + "&mensagem="+ msg + "&remetente="+ loginNomusChat  ,
+			        url: enderecoNomusChat + "/chat/recebeMensagem?loginNomusChat=" + loginNomusChat + "&senhaNomusChat="+ senhaNomusChat + "&nomeNomusChat="+ nomeNomusChat + "&nomeEmpresaNomusChat="+ nomeEmpresaNomusChat + "&destinatario=" + codigoDestinatario + "&mensagem="+ msg,
 			        dataType: 'jsonp', 
 			        jsonp: false,
 					jsonpCallback: "jsonMensagemEnviada",
@@ -45,13 +45,14 @@
 			exibirUsuariosLogados();
 	
 			intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 1000);
-			setInterval(exibirUsuariosLogados, 30000);
+			setInterval(exibirUsuariosLogados, 10000);
 
 			jQuery(document).on('click', '#usuariosLogados li', function(){  
 				
-				var remetente = jQuery(this).attr("id");
+				var keyRemetente = jQuery(this).attr("id");
+				var nomeRemetente = jQuery(this).text();
 				
-				chatboxManager.addBox("chat"+remetente, {dest: remetente, title: remetente , first_name: remetente, last_name: '' });
+				chatboxManager.addBox("chat"+keyRemetente, {dest: keyRemetente, title: '' , first_name: nomeRemetente, last_name: '' });
 			});
     	}
     	
@@ -77,8 +78,8 @@
 	            jQuery.each(data.list, function(i, item){
 
 	               jQuery("#usuariosLogados ul").append("<li>");
-	               jQuery("#usuariosLogados li:last").attr("id", item);
-	               jQuery("#usuariosLogados li:last").append(item);
+	               jQuery("#usuariosLogados li:last").attr("id", item.empresa.nome + "_" + item.login);
+	               jQuery("#usuariosLogados li:last").append(item.nome);
 
 	 	    	});
 	        }
@@ -96,8 +97,8 @@
 	        success: function(data) { 
 	            jQuery.each(data.list, function(i, item){
 
-	               chatboxManager.addBox("chat"+item.remetente, {dest: item.remetente, title: item.remetente , first_name: item.remetente, last_name: '' });
-	               jQuery("#chat"+item.remetente).chatbox("option", "boxManager").addMsg(item.remetente, item.mensagem);
+	               chatboxManager.addBox("chat"+item.remetente, {dest: item.remetente, title: '' , first_name: item.nome, last_name: '' });
+	               jQuery("#chat"+item.remetente).chatbox("option", "boxManager").addMsg(item.nome, item.mensagem);
 
 	 	    	});
 	        }

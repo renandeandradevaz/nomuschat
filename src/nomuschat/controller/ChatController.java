@@ -42,7 +42,7 @@ public class ChatController {
 
 		iniciaHashChat();
 
-		chat.get(destinatario).add(new ChatAuxiliar(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario(), mensagem));
+		chat.get(destinatario).add(new ChatAuxiliar(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario(), mensagem, this.sessaoUsuario.getUsuario().getEmpresa().getNome(), this.sessaoUsuario.getUsuario().getNome()));
 
 		result.use(Results.jsonp()).withCallback("jsonMensagemEnviada").from("ok").serialize();
 	}
@@ -87,10 +87,12 @@ public class ChatController {
 
 		for (Entry<String, Usuario> usuarioLogado : InterceptadorDeAutorizacao.getUsuariosLogados().entrySet()) {
 
-			if (!usuarioLogado.getKey().equals(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario())) {
+			// if
+			// (!usuarioLogado.getKey().equals(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario()))
+			// {
 
-				usuariosLogados.add(usuarioLogado.getValue());
-			}
+			usuariosLogados.add(usuarioLogado.getValue());
+			// }
 		}
 
 		result.use(Results.jsonp()).withCallback("jsonUsuariosLogados").from(usuariosLogados).include("empresa").serialize();

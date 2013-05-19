@@ -20,6 +20,8 @@ var chatboxManager = function() {
     var showList = new Array();
     // list of first names, for in-page demo
     var nameList = new Array();
+    
+    var codigoList = new Array();
 
     var config = {
 	width : 200, //px
@@ -90,12 +92,13 @@ var chatboxManager = function() {
 	    boxList.push(id);
 	    showList.push(id);
 	    nameList.push(user.first_name);
+	    codigoList.push(user.dest);
 	}
     };
 
     var messageSentCallback = function(id, user, msg) {
 	var idx = boxList.indexOf(id);
-	config.messageSent(nameList[idx], msg);
+	config.messageSent(nameList[idx], codigoList[idx], msg);
     };
 
     // not used in demo
