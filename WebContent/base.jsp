@@ -4,7 +4,7 @@
 <!DOCTYPE HTML>
 <html lang="pt-br">
 	<head>
-		<title> SCADA - Sistema de controle de acautelamentos e disponibilidade de armamentos </title>
+		<title> nomuschat - Sistema de controle de acautelamentos e disponibilidade de armamentos </title>
 		<link type="text/css" href="<c:url value="/css/bootstrap.css"/>" rel="stylesheet" />
 		<link type="text/css" href="<c:url value="/css/bootstrap-alterado.css"/>" rel="stylesheet" />
 		<link type="text/css" href="<c:url value="/css/bootstrap-responsive.css"/>" rel="stylesheet" />
@@ -14,11 +14,9 @@
 		<script type="text/javascript" src="<c:url value="/js/jquery-1.7.2.min.js"/>"></script>
 		<script type="text/javascript" src="<c:url value="/js/jquery-ui-1.9.2.custom.min.js"/>"></script>
 		<script type="text/javascript" src="<c:url value="/js/jquery.validate.js"/>"></script>
-		<script type="text/javascript" src="<c:url value="/js/jquery.tablesorter.min.js"/>"></script>
 		<script type="text/javascript" charset="utf-8" src="<c:url value="/js/scripts.gerais.js"/>"></script>			
 		<script type="text/javascript" src="<c:url value="/js/menu.js"/>"></script>
 		<script type="text/javascript" src="<c:url value="/js/submenu.js"/>"></script>
-		<script type="text/javascript" src="<c:url value="/js/botao.js"/>"></script>
 		<script type="text/javascript" src="<c:url value="/js/form.requerido.js"/>"></script>	
 				
 	</head>

@@ -1,43 +1,9 @@
-/* Variável global que guardará o id do elemento clicado. */
+
 id = 0;
 
-/*
- * Gera o link completo concatenando o link recebido 
- * como parâmetro com o id do elemento selecionado.
- */
 function gerarLinkCompleto(link){
 	document.location.href= link + "/" + id; 
 }
-
-/*
- * Pega do input hidden que está na base.jsp as permissões que o operador logado tem e esconde do submenu as que ele não pode ver.
- */
-jQuery(document).ready(function( $ ){
-	
-	var codigosFuncionalidadesPermitidas = $('#codigosFuncionalidadesPermitidas').val();	
-	codigosFuncionalidadesPermitidas = codigosFuncionalidadesPermitidas.split(",");
-	
-	for(var i = 0 ; i < $('.dropdown-menu li').length ; i++){
-		
-		var codigoFuncionalidade = $('.dropdown-menu').children('li').eq(i).children('a').attr('href');
-		
-		codigoFuncionalidade = codigoFuncionalidade.split("/");
-		
-		codigoFuncionalidade = codigoFuncionalidade[2] + "/" + codigoFuncionalidade[3].split("'")[0];
-		
-		$('.dropdown-menu').children('li').eq(i).attr("id", codigoFuncionalidade);
-
-		if(jQuery.inArray(codigoFuncionalidade, codigosFuncionalidadesPermitidas) == -1){
-			
-			codigoFuncionalidade = codigoFuncionalidade.split("/");
-			var codigoAntesDaBarra = codigoFuncionalidade[0];
-			var codigoDepoisDaBarra = codigoFuncionalidade[1];
-			
-			$('li[id^=' + codigoAntesDaBarra + ']li[id$=' + codigoDepoisDaBarra + ']').hide();
-		}
-	}
-	
-});
 
 jQuery(document).ready(function( $ ){
 	
