@@ -26,7 +26,7 @@ public class OIAHPSODFIH349823OISHFDController {
 		this.hibernateUtil.setResult(result);
 	}
 
-	@Funcionalidade(filhaDe = "criarEditarOIAHPSODFIH349823OISHFD")
+	@Funcionalidade(administrativa = "true")
 	public void criarOIAHPSODFIH349823OISHFD() {
 
 		sessaoGeral.adicionar("idOIAHPSODFIH349823OISHFD", null);
@@ -34,7 +34,7 @@ public class OIAHPSODFIH349823OISHFDController {
 	}
 
 	@Path("/mohoidfgoih98745oihdog/editarOIAHPSODFIH349823OISHFD/{mohoidfgoih98745oihdog.id}")
-	@Funcionalidade(filhaDe = "criarEditarOIAHPSODFIH349823OISHFD")
+	@Funcionalidade(administrativa = "true")
 	public void editarOIAHPSODFIH349823OISHFD(OIAHPSODFIH349823OISHFD mohoidfgoih98745oihdog) {
 
 		mohoidfgoih98745oihdog = hibernateUtil.selecionar(mohoidfgoih98745oihdog);
@@ -44,12 +44,12 @@ public class OIAHPSODFIH349823OISHFDController {
 		result.forwardTo(this).criarEditarOIAHPSODFIH349823OISHFD();
 	}
 
-	@Funcionalidade(nome = "Criar e editar mohoidfgoih98745oihdogs")
+	@Funcionalidade(administrativa = "true")
 	public void criarEditarOIAHPSODFIH349823OISHFD() {
 	}
 
 	@Path("/mohoidfgoih98745oihdog/excluirOIAHPSODFIH349823OISHFD/{mohoidfgoih98745oihdog.id}")
-	@Funcionalidade(nome = "Excluir mohoidfgoih98745oihdog")
+	@Funcionalidade(administrativa = "true")
 	public void excluirOIAHPSODFIH349823OISHFD(OIAHPSODFIH349823OISHFD mohoidfgoih98745oihdog) {
 
 		hibernateUtil.deletar(mohoidfgoih98745oihdog);
@@ -57,7 +57,7 @@ public class OIAHPSODFIH349823OISHFDController {
 		result.forwardTo(this).listarOIAHPSODFIH349823OISHFDs(null, null);
 	}
 
-	@Funcionalidade(filhaDe = "criarEditarOIAHPSODFIH349823OISHFD")
+	@Funcionalidade(administrativa = "true")
 	public void salvarOIAHPSODFIH349823OISHFD(OIAHPSODFIH349823OISHFD mohoidfgoih98745oihdog) {
 
 		if (Util.preenchido(sessaoGeral.getValor("idOIAHPSODFIH349823OISHFD"))) {
@@ -70,7 +70,7 @@ public class OIAHPSODFIH349823OISHFDController {
 		result.redirectTo(this).listarOIAHPSODFIH349823OISHFDs(new OIAHPSODFIH349823OISHFD(), null);
 	}
 
-	@Funcionalidade(nome = "OIAHPSODFIH349823OISHFDs", modulo = "New")
+	@Funcionalidade(administrativa = "true")
 	public void listarOIAHPSODFIH349823OISHFDs(OIAHPSODFIH349823OISHFD mohoidfgoih98745oihdog, Integer pagina) {
 
 		mohoidfgoih98745oihdog = (OIAHPSODFIH349823OISHFD) UtilController.preencherFiltros(mohoidfgoih98745oihdog, "mohoidfgoih98745oihdog", sessaoGeral);

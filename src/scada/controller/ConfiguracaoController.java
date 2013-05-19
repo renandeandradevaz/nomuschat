@@ -26,7 +26,7 @@ public class ConfiguracaoController {
 		this.hibernateUtil.setResult(result);
 	}
 
-	@Funcionalidade(nome = "Configurações gerais", modulo = "Configurações")
+	@Funcionalidade(administrativa = "true")
 	public void configuracoes() {
 
 		List<Configuracao> configuracoes = hibernateUtil.buscar(new Configuracao());
@@ -52,7 +52,7 @@ public class ConfiguracaoController {
 		result.include("configuracoes", hashConfiguracoes);
 	}
 
-	@Funcionalidade(filhaDe = "configuracoes")
+	@Funcionalidade(administrativa = "true")
 	public void salvarConfiguracoes(HashMap<String, String> configuracoes) {
 
 		for (Entry<String, String> configuracaoEntrySet : configuracoes.entrySet()) {
@@ -77,5 +77,4 @@ public class ConfiguracaoController {
 
 		result.forwardTo(this).configuracoes();
 	}
-
 }

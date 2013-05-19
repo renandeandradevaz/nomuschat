@@ -6,7 +6,6 @@ import org.hibernate.criterion.MatchMode;
 
 import scada.anotacoes.Funcionalidade;
 import scada.hibernate.HibernateUtil;
-import scada.modelo.GrupoOperador;
 import scada.modelo.Operador;
 import scada.sessao.SessaoGeral;
 import scada.util.GeradorDeMd5;
@@ -36,7 +35,7 @@ public class OperadorController {
 
 	}
 
-	@Funcionalidade(filhaDe = "criarEditarOperador")
+	@Funcionalidade(administrativa = "true")
 	public void criarOperador() {
 
 		sessaoGeral.adicionar("idOperador", null);
@@ -44,7 +43,7 @@ public class OperadorController {
 	}
 
 	@Path("/operador/editarOperador/{operador.id}")
-	@Funcionalidade(filhaDe = "criarEditarOperador")
+	@Funcionalidade(administrativa = "true")
 	public void editarOperador(Operador operador) {
 
 		operador = hibernateUtil.selecionar(operador);
@@ -61,22 +60,13 @@ public class OperadorController {
 		result.forwardTo(this).criarEditarOperador();
 	}
 
-	@Funcionalidade(nome = "Criar e editar operadores")
+	@Funcionalidade(administrativa = "true")
 	public void criarEditarOperador() {
 
-		List<GrupoOperador> gruposOperador = hibernateUtil.buscar(new GrupoOperador());
-		result.include("gruposOperador", gruposOperador);
-
-		listarGraduacoes();
-	}
-
-	private void listarGraduacoes() {
-		List<String> graduacoes = Operador.listarGraduacoes();
-		result.include("graduacoes", graduacoes);
 	}
 
 	@Path("/operador/excluirOperador/{operador.id}")
-	@Funcionalidade(nome = "Excluir operador")
+	@Funcionalidade(administrativa = "true")
 	public void excluirOperador(Operador operador) {
 
 		Operador operadoreselecionado = hibernateUtil.selecionar(operador);
@@ -93,13 +83,12 @@ public class OperadorController {
 		result.forwardTo(this).listarOperadores(null, null);
 	}
 
-	@Funcionalidade(filhaDe = "criarEditarOperador")
+	@Funcionalidade(administrativa = "true")
 	public void salvarOperador(Operador operador) {
 
 		if (Util.vazio(sessaoGeral.getValor("idOperador"))) {
 
 			validarNomesRepetidos(operador);
-			validarIdentidadesRepetidas(operador);
 
 			operador.setSenha(GeradorDeMd5.converter(operador.getSenha()));
 		}
@@ -111,10 +100,6 @@ public class OperadorController {
 			if (!operador.getLogin().equals(operadoreselecionado.getLogin())) {
 
 				validarNomesRepetidos(operador);
-			}
-			if (!operador.getIdentidade().equals(operadoreselecionado.getIdentidade())) {
-
-				validarIdentidadesRepetidas(operador);
 			}
 
 			operador.setId((Integer) sessaoGeral.getValor("idOperador"));
@@ -134,21 +119,11 @@ public class OperadorController {
 		if (Util.preenchido(hibernateUtil.buscar(operadorFiltro, MatchMode.EXACT))) {
 			validator.add(new ValidationMessage("Já existe um operador com este login", "Erro"));
 		}
+
 		validator.onErrorForwardTo(this).criarEditarOperador();
 	}
 
-	private void validarIdentidadesRepetidas(Operador operador) {
-
-		Operador operadorFiltro = new Operador();
-		operadorFiltro.setIdentidade(operador.getIdentidade());
-
-		if (Util.preenchido(hibernateUtil.buscar(operadorFiltro, MatchMode.EXACT))) {
-			validator.add(new ValidationMessage("Já existe um operador com esta identidade", "Erro"));
-		}
-		validator.onErrorForwardTo(this).criarEditarOperador();
-	}
-
-	@Funcionalidade(nome = "Operadores", modulo = "Controle de acesso")
+	@Funcionalidade(administrativa = "true")
 	public void listarOperadores(Operador operador, Integer pagina) {
 
 		operador = (Operador) UtilController.preencherFiltros(operador, "operador", sessaoGeral);
@@ -159,13 +134,10 @@ public class OperadorController {
 		List<Operador> operadores = hibernateUtil.buscar(operador, pagina);
 
 		result.include("operadores", operadores);
-
-		listarGraduacoes();
-
 	}
 
 	@Path("/operador/trocarSenha/{operador.id}")
-	@Funcionalidade(nome = "Trocar senha")
+	@Funcionalidade(administrativa = "true")
 	public void trocarSenha(Operador operador) {
 
 		operador = hibernateUtil.selecionar(operador);
@@ -180,7 +152,7 @@ public class OperadorController {
 		sessaoGeral.adicionar("idOperador", operador.getId());
 	}
 
-	@Funcionalidade(filhaDe = "trocarSenha")
+	@Funcionalidade(administrativa = "true")
 	public void salvarTrocaSenha(String senha) {
 
 		Operador operador = hibernateUtil.selecionar(new Operador((Integer) this.sessaoGeral.getValor("idOperador")));

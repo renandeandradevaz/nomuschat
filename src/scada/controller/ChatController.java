@@ -30,7 +30,7 @@ public class ChatController {
 		this.hibernateUtil.setResult(result);
 	}
 
-	@Funcionalidade(nome = "Recebe a mensagem do cliente e salva na variável")
+	@Funcionalidade
 	public void recebeMensagem(String remetente, String destinatario, String mensagem) {
 
 		iniciaHashChat(destinatario);
@@ -43,7 +43,7 @@ public class ChatController {
 		}
 	}
 
-	@Funcionalidade(nome = "Verifica a existência de novas mensagens")
+	@Funcionalidade
 	public void verificaExistenciaNovasMensagens(String login) {
 
 		iniciaHashChat(login);
@@ -56,7 +56,7 @@ public class ChatController {
 		}
 	}
 
-	@Funcionalidade(nome = "")
+	@Funcionalidade
 	public void exibirUsuariosLogados(String login) {
 
 		if (!InterceptadorDeAutorizacao.getUsuariosLogados().containsKey(login)) {
