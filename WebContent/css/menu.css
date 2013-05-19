@@ -32,7 +32,7 @@ div#menu ul {
     float: left;
 }
 
-div#menu ul.menu-operador {
+div#menu ul.menu-usuario {
     float: right;
     padding-top: 10px;
     color: white;
@@ -91,7 +91,6 @@ div#menu a {
 div#menu span {
     margin-top: 5px;
 }/**@replace#1*/
-div#menu li { background: url(images/main-delimiter.png) 98% 4px no-repeat; }
 div#menu li.last { background: none; }
 
 /* menu::level2 */

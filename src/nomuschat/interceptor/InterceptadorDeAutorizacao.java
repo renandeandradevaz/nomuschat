@@ -10,8 +10,8 @@ import org.hibernate.criterion.MatchMode;
 import nomuschat.anotacoes.Public;
 import nomuschat.controller.LoginController;
 import nomuschat.hibernate.HibernateUtil;
-import nomuschat.modelo.Operador;
-import nomuschat.sessao.SessaoOperador;
+import nomuschat.modelo.Usuario;
+import nomuschat.sessao.SessaoUsuario;
 import nomuschat.util.Util;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
@@ -24,14 +24,14 @@ import br.com.caelum.vraptor.validator.ValidationMessage;
 @Intercepts
 public class InterceptadorDeAutorizacao implements Interceptor {
 
-	private final SessaoOperador sessaoOperador;
+	private final SessaoUsuario sessaoUsuario;
 	private Result result;
 	private HttpServletRequest request;
 	private HibernateUtil hibernateUtil;
 	private static HashMap<String, String> usuariosLogados;
 
-	public InterceptadorDeAutorizacao(SessaoOperador sessaoOperador, Result result, HttpServletRequest request, HibernateUtil hibernateUtil) {
-		this.sessaoOperador = sessaoOperador;
+	public InterceptadorDeAutorizacao(SessaoUsuario sessaoUsuario, Result result, HttpServletRequest request, HibernateUtil hibernateUtil) {
+		this.sessaoUsuario = sessaoUsuario;
 		this.result = result;
 		this.request = request;
 		this.hibernateUtil = hibernateUtil;
@@ -47,20 +47,20 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 
 	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
 
-		if (Util.vazio(sessaoOperador.getOperador())) {
+		if (Util.vazio(sessaoUsuario.getUsuario())) {
 
 			String login = request.getParameter("login");
 			String senha = request.getParameter("senha");
 
-			Operador operador = new Operador();
-			operador.setLogin(login);
-			operador.setSenha(senha);
+			Usuario usuario = new Usuario();
+			usuario.setLogin(login);
+			usuario.setSenha(senha);
 
 			try {
 
-				operador = hibernateUtil.selecionar(operador, MatchMode.EXACT);
+				usuario = hibernateUtil.selecionar(usuario, MatchMode.EXACT);
 
-				if (Util.vazio(operador)) {
+				if (Util.vazio(usuario)) {
 
 					hibernateUtil.fecharSessao();
 					result.include("errors", Arrays.asList(new ValidationMessage("Login ou senha incorretos", "Erro")));
@@ -69,14 +69,14 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 
 				else {
 
-					sessaoOperador.login(operador);
+					sessaoUsuario.login(usuario);
 
 					if (usuariosLogados == null) {
 
 						usuariosLogados = new HashMap<String, String>();
 					}
 
-					usuariosLogados.put(operador.getLogin(), "");
+					usuariosLogados.put(usuario.getLogin(), "");
 					stack.next(method, resourceInstance);
 				}
 			}
@@ -85,7 +85,7 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 
 				hibernateUtil.fecharSessao();
 
-				result.include("errors", Arrays.asList(new ValidationMessage("O operador não está logado no sistema", "Erro")));
+				result.include("errors", Arrays.asList(new ValidationMessage("O usuario não está logado no sistema", "Erro")));
 				result.redirectTo(LoginController.class).telaLogin();
 			}
 		}

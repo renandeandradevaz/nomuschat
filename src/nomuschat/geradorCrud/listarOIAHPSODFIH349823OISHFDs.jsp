@@ -23,7 +23,7 @@
 		<c:set var="link" value="mohoidfgoih98745oihdog/listarOIAHPSODFIH349823OISHFDs" scope="request" />
 		<%@ include file="/paginacao.jsp" %> 
 		
-		<table class="table table-striped table-bordered tablesorter">
+		<table class="table table-striped table-bordered">
 			<thead>
 		    	<tr>
  <!-- Th label aqui -->

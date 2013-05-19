@@ -9,7 +9,7 @@ import nomuschat.anotacoes.Funcionalidade;
 import nomuschat.auxiliar.ChatAuxiliar;
 import nomuschat.hibernate.HibernateUtil;
 import nomuschat.interceptor.InterceptadorDeAutorizacao;
-import nomuschat.sessao.SessaoOperador;
+import nomuschat.sessao.SessaoUsuario;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -20,12 +20,12 @@ public class ChatController {
 	public static HashMap<String, List<ChatAuxiliar>> chat;
 	private final Result result;
 	private HibernateUtil hibernateUtil;
-	private SessaoOperador sessaoOperador;
+	private SessaoUsuario sessaoUsuario;
 
-	public ChatController(Result result, HibernateUtil hibernateUtil, SessaoOperador sessaoOperador) {
+	public ChatController(Result result, HibernateUtil hibernateUtil, SessaoUsuario sessaoUsuario) {
 
 		this.result = result;
-		this.sessaoOperador = sessaoOperador;
+		this.sessaoUsuario = sessaoUsuario;
 		this.hibernateUtil = hibernateUtil;
 		this.hibernateUtil.setResult(result);
 	}
@@ -35,7 +35,7 @@ public class ChatController {
 
 		iniciaHashChat(destinatario);
 
-		if (remetente.equals(this.sessaoOperador.getOperador().getLogin())) {
+		if (remetente.equals(this.sessaoUsuario.getUsuario().getLogin())) {
 
 			chat.get(destinatario).add(new ChatAuxiliar(remetente, mensagem));
 
@@ -48,7 +48,7 @@ public class ChatController {
 
 		iniciaHashChat(login);
 
-		if (login.equals(this.sessaoOperador.getOperador().getLogin())) {
+		if (login.equals(this.sessaoUsuario.getUsuario().getLogin())) {
 
 			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagens").from(chat.get(login)).serialize();
 

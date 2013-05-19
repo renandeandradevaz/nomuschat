@@ -1,6 +1,6 @@
 <%@ include file="/base.jsp" %> 
 
-<form class="form-horizontal" action="<c:url value="/operador/salvarTrocaSenha"/>" method="post">
+<form class="form-horizontal" action="<c:url value="/usuario/salvarTrocaSenha"/>" method="post">
   <fieldset>
     <legend>Informe a nova senha</legend>
     
@@ -12,6 +12,6 @@
     </div>
             
     <button type="submit" class="btn btn-primary">Salvar</button>
-    <a class="btn btn-danger" href="<c:url value="/operador/listarOperadores"/>" > Cancelar </a>
+    <a class="btn btn-danger" href="<c:url value="/usuario/listarUsuarios"/>" > Cancelar </a>
   </fieldset>
 </form>

@@ -15,7 +15,7 @@
       <property name="hibernate.hbm2ddl.auto">update</property>
       <property name="hibernate.generate_statistics">false</property>
       
-      <mapping class="nomuschat.modelo.Operador" />
+      <mapping class="nomuschat.modelo.Usuario" />
       <mapping class="nomuschat.modelo.Empresa" />
       <mapping class="nomuschat.modelo.Configuracao" />
 

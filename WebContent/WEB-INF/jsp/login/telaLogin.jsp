@@ -55,8 +55,8 @@
 	
 	      <form class="form-signin" action="<c:url value="/login/efetuarLogin"/>" method="post" >
 	        <h3 class="form-signin-heading"> Login </h3>
-	        <input type="text" class="input-block-level" placeholder="Operador" name="operador.login" >
-	        <input type="password" class="input-block-level" placeholder="Senha" name="operador.senha" >
+	        <input type="text" class="input-block-level" placeholder="Usuario" name="usuario.login" >
+	        <input type="password" class="input-block-level" placeholder="Senha" name="usuario.senha" >
 	        
 	        <br> <br> 
 	        

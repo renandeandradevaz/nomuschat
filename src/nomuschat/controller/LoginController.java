@@ -1,13 +1,15 @@
 package nomuschat.controller;
 
-import org.hibernate.criterion.MatchMode;
-
 import nomuschat.anotacoes.Public;
 import nomuschat.hibernate.HibernateUtil;
-import nomuschat.modelo.Operador;
-import nomuschat.sessao.SessaoOperador;
+import nomuschat.modelo.Empresa;
+import nomuschat.modelo.Usuario;
+import nomuschat.sessao.SessaoUsuario;
 import nomuschat.util.GeradorDeMd5;
 import nomuschat.util.Util;
+
+import org.hibernate.criterion.MatchMode;
+
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -20,13 +22,13 @@ public class LoginController {
 	private static final String HASH_SENHA_ADMINISTRADOR = "b9bde749700bd25648b0a3f2ecaa81c2";
 
 	private final Result result;
-	private SessaoOperador sessaoOperador;
+	private SessaoUsuario sessaoUsuario;
 	private Validator validator;
 	private HibernateUtil hibernateUtil;
 
-	public LoginController(Result result, SessaoOperador sessaoOperador, Validator validator, HibernateUtil hibernateUtil) {
+	public LoginController(Result result, SessaoUsuario sessaoUsuario, Validator validator, HibernateUtil hibernateUtil) {
 		this.result = result;
-		this.sessaoOperador = sessaoOperador;
+		this.sessaoUsuario = sessaoUsuario;
 		this.validator = validator;
 		this.hibernateUtil = hibernateUtil;
 	}
@@ -38,46 +40,53 @@ public class LoginController {
 	}
 
 	@Public
-	public void efetuarLogin(Operador operador) {
+	public void efetuarLogin(Usuario usuario) {
 
-		verificaExistenciaAdministrador(operador);
-		tentarEfetuarLogin(operador);
-		colocarOperadorNaSessao(operador);
+		verificaExistenciaAdministrador(usuario);
+		tentarEfetuarLogin(usuario);
+		colocarUsuarioNaSessao(usuario);
 		result.redirectTo(HomeController.class).home();
 	}
 
-	private void verificaExistenciaAdministrador(Operador operador) {
+	private void verificaExistenciaAdministrador(Usuario usuario) {
 
-		if (operador.getLogin().equals("administrador") && GeradorDeMd5.converter(operador.getSenha()).equals(HASH_SENHA_ADMINISTRADOR)) {
+		if (usuario.getLogin().equals("administrador") && GeradorDeMd5.converter(usuario.getSenha()).equals(HASH_SENHA_ADMINISTRADOR)) {
 
-			Operador operadorFiltro = new Operador();
-			operadorFiltro.setLogin("administrador");
+			Usuario usuarioFiltro = new Usuario();
+			usuarioFiltro.setLogin("administrador");
 
-			Operador operadorBanco = hibernateUtil.selecionar(operadorFiltro, MatchMode.EXACT);
+			Usuario usuarioBanco = hibernateUtil.selecionar(usuarioFiltro, MatchMode.EXACT);
 
-			if (Util.vazio(operadorBanco)) {
+			if (Util.vazio(usuarioBanco)) {
 
-				operador.setSenha(HASH_SENHA_ADMINISTRADOR);
-				hibernateUtil.salvarOuAtualizar(operador);
+				Empresa empresa = new Empresa();
+				empresa.setNome("Nomus");
+				hibernateUtil.salvarOuAtualizar(empresa);
+
+				usuario.setNome("Administrador");
+				usuario.setAdministrador(true);
+				usuario.setSenha(HASH_SENHA_ADMINISTRADOR);
+				usuario.setEmpresa(empresa);
+				hibernateUtil.salvarOuAtualizar(usuario);
 			}
 		}
 	}
 
-	private void tentarEfetuarLogin(Operador operador) {
+	private void tentarEfetuarLogin(Usuario usuario) {
 
-		operador.setSenha(GeradorDeMd5.converter(operador.getSenha()));
+		usuario.setSenha(GeradorDeMd5.converter(usuario.getSenha()));
 
-		Operador operadorBanco = null;
+		Usuario usuarioBanco = null;
 
-		if (Util.preenchido(operador.getLogin())) {
+		if (Util.preenchido(usuario.getLogin())) {
 
-			Operador operadorFiltro = new Operador();
-			operadorFiltro.setLogin(operador.getLogin());
+			Usuario usuarioFiltro = new Usuario();
+			usuarioFiltro.setLogin(usuario.getLogin());
 
-			operadorBanco = hibernateUtil.selecionar(operadorFiltro, MatchMode.EXACT);
+			usuarioBanco = hibernateUtil.selecionar(usuarioFiltro, MatchMode.EXACT);
 		}
 
-		if (Util.vazio(operadorBanco) || !operadorBanco.getSenha().equals(operador.getSenha())) {
+		if (Util.vazio(usuarioBanco) || !usuarioBanco.getSenha().equals(usuario.getSenha())) {
 
 			validator.add(new ValidationMessage("Login ou senha incorretos", "Erro"));
 		}
@@ -85,9 +94,9 @@ public class LoginController {
 		validator.onErrorRedirectTo(this).telaLogin();
 	}
 
-	private void colocarOperadorNaSessao(Operador operador) {
+	private void colocarUsuarioNaSessao(Usuario usuario) {
 
-		this.sessaoOperador.login((Operador) this.hibernateUtil.selecionar(operador, MatchMode.EXACT));
+		this.sessaoUsuario.login((Usuario) this.hibernateUtil.selecionar(usuario, MatchMode.EXACT));
 	}
 
 	@Public
@@ -98,7 +107,7 @@ public class LoginController {
 	@Public
 	public void logout() {
 
-		sessaoOperador.logout();
+		sessaoUsuario.logout();
 
 		result.redirectTo(this).telaLogin();
 	}
@@ -117,18 +126,18 @@ public class LoginController {
 			return;
 		}
 
-		Operador operador = hibernateUtil.selecionar(new Operador(sessaoOperador.getOperador().getId()));
+		Usuario usuario = hibernateUtil.selecionar(new Usuario(sessaoUsuario.getUsuario().getId()));
 
-		if (!GeradorDeMd5.converter(senhaAntiga).equals(operador.getSenha())) {
+		if (!GeradorDeMd5.converter(senhaAntiga).equals(usuario.getSenha())) {
 
 			validator.add(new ValidationMessage("Senha antiga incorreta", "Erro"));
 
 			validator.onErrorRedirectTo(this).trocarPropriaSenha();
 		}
 
-		operador.setSenha(GeradorDeMd5.converter(senhaNova));
+		usuario.setSenha(GeradorDeMd5.converter(senhaNova));
 
-		hibernateUtil.salvarOuAtualizar(operador);
+		hibernateUtil.salvarOuAtualizar(usuario);
 
 		result.include("sucesso", "Senha trocada com sucesso");
 
@@ -137,7 +146,7 @@ public class LoginController {
 
 	private boolean verificarUsuarioLogado() {
 
-		if (sessaoOperador.getOperador() == null) {
+		if (sessaoUsuario.getUsuario() == null) {
 
 			result.redirectTo(this).telaLogin();
 			return false;

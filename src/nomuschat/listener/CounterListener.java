@@ -5,7 +5,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import nomuschat.interceptor.InterceptadorDeAutorizacao;
-import nomuschat.sessao.SessaoOperador;
+import nomuschat.sessao.SessaoUsuario;
 import nomuschat.util.Util;
 
 public final class CounterListener implements HttpSessionListener {
@@ -21,13 +21,13 @@ public final class CounterListener implements HttpSessionListener {
 
 	public synchronized void sessionDestroyed(HttpSessionEvent se) {
 
-		if (Util.preenchido(se.getSession().getAttribute("sessaoOperador")) && se.getSession().getAttribute("sessaoOperador") instanceof SessaoOperador) {
+		if (Util.preenchido(se.getSession().getAttribute("sessaoUsuario")) && se.getSession().getAttribute("sessaoUsuario") instanceof SessaoUsuario) {
 
-			SessaoOperador sessaoOperador = (SessaoOperador) se.getSession().getAttribute("sessaoOperador");
+			SessaoUsuario sessaoUsuario = (SessaoUsuario) se.getSession().getAttribute("sessaoUsuario");
 
-			if (Util.preenchido(InterceptadorDeAutorizacao.getUsuariosLogados()) && Util.preenchido(sessaoOperador) && Util.preenchido(sessaoOperador.getOperador()) && Util.preenchido(sessaoOperador.getOperador().getLogin())) {
+			if (Util.preenchido(InterceptadorDeAutorizacao.getUsuariosLogados()) && Util.preenchido(sessaoUsuario) && Util.preenchido(sessaoUsuario.getUsuario()) && Util.preenchido(sessaoUsuario.getUsuario().getLogin())) {
 
-				InterceptadorDeAutorizacao.getUsuariosLogados().remove(sessaoOperador.getOperador().getLogin());
+				InterceptadorDeAutorizacao.getUsuariosLogados().remove(sessaoUsuario.getUsuario().getLogin());
 			}
 
 		}

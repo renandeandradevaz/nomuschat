@@ -24,7 +24,7 @@
 		<c:set var="link" value="empresa/listarEmpresas" scope="request" />
 		<%@ include file="/paginacao.jsp" %> 
 		
-		<table class="table table-striped table-bordered tablesorter">
+		<table class="table table-striped table-bordered">
 			<thead>
 		    	<tr>
                     <th> Nome </th>

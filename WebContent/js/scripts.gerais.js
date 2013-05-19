@@ -1,8 +1,6 @@
 
 jQuery(document).ready(function() {
 	
-	jQuery(".tablesorter").tablesorter();
-	
 	jQuery(".data").datepicker({
 		
 		dateFormat: 'dd/mm/yy',

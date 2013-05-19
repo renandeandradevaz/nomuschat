@@ -38,14 +38,14 @@
 				        <li>
 				        	<a href="" class="parent"><span>Menu</span></a>
 				            <ul>
-				            	<li><a href="<c:url value="/operador/listarOperadores"/>"><span> Usuários </span></a></li>
+				            	<li><a href="<c:url value="/usuario/listarUsuarios"/>"><span> Usuários </span></a></li>
 				            	<li><a href="<c:url value="/empresa/listarEmpresas"/>"><span> Empresas </span></a></li>
 				            	<li><a href="<c:url value="/configuracao/configuracoes"/>"><span> Configurações </span></a></li>
 				            </ul>
 				        </li>     
 				    </ul>
-				    <ul class="menu-operador" >
-				    	<li><span> Logado como: ${sessaoOperador.operador.postoGraduacao} ${sessaoOperador.operador.nome} &nbsp; </span> </li>
+				    <ul class="menu-usuario" >
+				    	<li><span> Logado como: ${sessaoUsuario.usuario.login} &nbsp; </span> </li>
 				    </ul>
 				</div>
 			</div>

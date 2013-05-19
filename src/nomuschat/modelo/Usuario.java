@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import nomuschat.hibernate.Entidade;
 
 @Entity
-public class Operador implements Entidade {
+public class Usuario implements Entidade {
 
 	@Id
 	@GeneratedValue
@@ -20,17 +20,22 @@ public class Operador implements Entidade {
 	private String login;
 
 	@NotNull
+	private String nome;
+
+	@NotNull
 	private String senha;
+
+	private Boolean administrador;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Empresa empresa;
 
-	public Operador() {
+	public Usuario() {
 
 	}
 
-	public Operador(Integer id) {
+	public Usuario(Integer id) {
 
 		this.setId(id);
 	}
@@ -65,5 +70,21 @@ public class Operador implements Entidade {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public Boolean getAdministrador() {
+		return administrador;
+	}
+
+	public void setAdministrador(Boolean administrador) {
+		this.administrador = administrador;
 	}
 }
