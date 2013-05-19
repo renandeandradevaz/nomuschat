@@ -10,6 +10,7 @@ import nomuschat.anotacoes.Funcionalidade;
 import nomuschat.anotacoes.Public;
 import nomuschat.controller.LoginController;
 import nomuschat.hibernate.HibernateUtil;
+import nomuschat.modelo.Empresa;
 import nomuschat.modelo.Usuario;
 import nomuschat.sessao.SessaoUsuario;
 import nomuschat.util.Util;
@@ -45,63 +46,94 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 		boolean contemAnotacaoPublic = !method.containsAnnotation(Public.class);
 
 		return contemAnotacaoPublic;
-
 	}
 
 	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
 
 		if (Util.vazio(sessaoUsuario.getUsuario())) {
 
-			String login = request.getParameter("login");
-			String senha = request.getParameter("senha");
+			String login = request.getParameter("loginNomusChat");
+			String senha = request.getParameter("senhaNomusChat");
+			String nome = request.getParameter("nomeNomusChat");
+			String nomeEmpresa = request.getParameter("nomeEmpresaNomusChat");
 
-			if (Util.vazio(login) || Util.vazio(senha)) {
+			if (Util.vazio(login) || Util.vazio(senha) || Util.vazio(nomeEmpresa)) {
 
 				usuarioNaoLogadoNoSistema();
 				return;
 			}
 
-			Usuario usuario = new Usuario();
-			usuario.setLogin(login);
-			usuario.setSenha(senha);
+			Usuario usuarioLogado = null;
 
-			try {
+			Empresa empresa = new Empresa();
+			empresa.setNome(nomeEmpresa);
 
-				usuario = hibernateUtil.selecionar(usuario, MatchMode.EXACT);
+			if (this.hibernateUtil.contar(empresa, MatchMode.EXACT) == 0) {
 
-				if (Util.vazio(usuario)) {
+				this.hibernateUtil.salvarOuAtualizar(empresa);
 
-					loginOuSenhaIncorretos();
+				Usuario usuario = new Usuario();
+				usuario.setLogin(login);
+				usuario.setSenha(senha);
+				usuario.setNome(nome);
+				usuario.setAdministrador(false);
+				usuario.setEmpresa(empresa);
+
+				this.hibernateUtil.salvarOuAtualizar(usuario);
+
+				usuarioLogado = usuario;
+			}
+
+			else {
+
+				empresa = this.hibernateUtil.selecionar(empresa);
+
+				Usuario usuario = new Usuario();
+				usuario.setLogin(login);
+				usuario.setEmpresa(empresa);
+
+				Usuario usuarioBanco = this.hibernateUtil.selecionar(usuario, MatchMode.EXACT);
+
+				if (Util.vazio(usuarioBanco)) {
+
+					usuario.setSenha(senha);
+					usuario.setNome(nome);
+					usuario.setAdministrador(false);
+					this.hibernateUtil.salvarOuAtualizar(usuario);
 				}
 
 				else {
 
-					sessaoUsuario.login(usuario);
+					if (!usuarioBanco.getSenha().equals(senha)) {
 
-					if (usuariosLogados == null) {
-
-						usuariosLogados = new HashMap<String, String>();
-					}
-
-					usuariosLogados.put(usuario.getLogin(), "");
-
-					if (possuiPermissao(stack, method, resourceInstance, usuario)) {
-
-						stack.next(method, resourceInstance);
-					}
-
-					else {
-
-						permissaoNegada();
+						result.redirectTo(LoginController.class).telaLogin();
 						return;
 					}
 				}
+
+				usuarioLogado = usuario;
 			}
 
-			catch (Exception e) {
+			this.sessaoUsuario.login((Usuario) usuarioLogado);
 
-				usuarioNaoLogadoNoSistema();
+			if (usuariosLogados == null) {
+
+				usuariosLogados = new HashMap<String, String>();
 			}
+
+			usuariosLogados.put(nomeEmpresa + "_" + usuarioLogado.getLogin(), "");
+
+			if (possuiPermissao(stack, method, resourceInstance, usuarioLogado)) {
+
+				stack.next(method, resourceInstance);
+			}
+
+			else {
+
+				permissaoNegada();
+				return;
+			}
+
 		}
 
 		else {
@@ -149,22 +181,12 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 
 	private void usuarioNaoLogadoNoSistema() {
 
-		hibernateUtil.fecharSessao();
-
 		result.include("errors", Arrays.asList(new ValidationMessage("O usuario não está logado no sistema", "Erro")));
-		result.redirectTo(LoginController.class).telaLogin();
-	}
-
-	private void loginOuSenhaIncorretos() {
-
-		hibernateUtil.fecharSessao();
-		result.include("errors", Arrays.asList(new ValidationMessage("Login ou senha incorretos", "Erro")));
 		result.redirectTo(LoginController.class).telaLogin();
 	}
 
 	private void permissaoNegada() {
 
-		hibernateUtil.fecharSessao();
 		result.redirectTo(LoginController.class).permissaoNegada();
 	}
 
@@ -176,5 +198,10 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 		}
 
 		return usuariosLogados;
+	}
+
+	public static void setUsuariosLogados(HashMap<String, String> usuariosLogados) {
+		
+		InterceptadorDeAutorizacao.usuariosLogados = usuariosLogados;
 	}
 }

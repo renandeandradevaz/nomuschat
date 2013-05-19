@@ -1,18 +1,13 @@
 package nomuschat.controller;
 
-import nomuschat.anotacoes.Public;
+import nomuschat.anotacoes.Funcionalidade;
 import br.com.caelum.vraptor.Resource;
 
 @Resource
 public class HomeController {
 
-	@Public
+	@Funcionalidade
 	public void home() {
-
-	}
-
-	@Public
-	public void sobre() {
 
 	}
 

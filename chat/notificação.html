@@ -29,15 +29,16 @@ width: 1000px;
 height: 250px;
 }
 
-
 </style>
 
 <div class='notificacao' > teste </div>
 
-<div id='divchat' >
-
-</div>
-
+<form id="formNomusChat" method="post" action="http://localhost:8080/nomuschat/login/loginVindoDoPCP" target="novaAbaNomusChat" style="display: none" >
+	<input type="hidden" name="loginNomusChat" value="renan" />
+	<input type="hidden" name="senhaNomusChat" value="1234" />
+	<input type="hidden" name="nomeNomusChat" value="Renan Vaz" />
+	<input type="hidden" name="nomeEmpresaNomusChat" value="Projetec" />
+</form>
 
 <script>
 
@@ -51,23 +52,11 @@ jQuery("div.notificacao").animate({right:0,}, 500);
 }
 
 jQuery(".notificacao").click(function() {
-  
-	jQuery("#divchat").show();
-	jQuery("#divchat").append("<iframe id='iframechat' src='chat.htm?renan=teste' >  </iframe>");
 	
+	  var formNomusChat = document.getElementById('formNomusChat');
+	  window.open('', 'novaAbaNomusChat');
+	  formNomusChat.submit();
 });
 
 
 </script>
-
-
-<!--  <form action="action" method="post" target="output_frame">
-
-</form>
-<iframe name="output_frame" src="" id="output_frame" width="XX" height="YY">
-</iframe>
-
---> 
-
-
-

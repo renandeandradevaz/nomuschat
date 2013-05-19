@@ -4,7 +4,7 @@
 <!DOCTYPE HTML>
 <html lang="pt-br">
 	<head>
-		<title> nomuschat - Sistema de controle de acautelamentos e disponibilidade de armamentos </title>
+		<title> Nomus Chat </title>
 		<link type="text/css" href="<c:url value="/css/bootstrap.css"/>" rel="stylesheet" />
 		<link type="text/css" href="<c:url value="/css/bootstrap-alterado.css"/>" rel="stylesheet" />
 		<link type="text/css" href="<c:url value="/css/bootstrap-responsive.css"/>" rel="stylesheet" />
