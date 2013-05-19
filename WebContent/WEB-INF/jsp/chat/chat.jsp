@@ -27,11 +27,11 @@
 		    
 		    var broadcastMessageCallback = function(from, msg) {
 		        
-		    jQuery("#chat"+from).chatbox("option", "boxManager").addMsg(login, msg);
+		    jQuery("#chat"+from).chatbox("option", "boxManager").addMsg(loginNomusChat, msg);
 		
 				jQuery.ajax({ 
 			        type: 'GET',
-			        url: enderecoNomusChat + "/chat/recebeMensagem?loginNomusChat=" + loginNomusChat + "&senhaNomusChat="+ senhaNomusChat + "&nomeNomusChat="+ nomeNomusChat + "&nomeEmpresaNomusChat="+ nomeEmpresaNomusChat + "&destinatario=" + from + "&mensagem="+ msg  ,
+			        url: enderecoNomusChat + "/chat/recebeMensagem?loginNomusChat=" + loginNomusChat + "&senhaNomusChat="+ senhaNomusChat + "&nomeNomusChat="+ nomeNomusChat + "&nomeEmpresaNomusChat="+ nomeEmpresaNomusChat + "&destinatario=" + from + "&mensagem="+ msg + "&remetente="+ loginNomusChat  ,
 			        dataType: 'jsonp', 
 			        jsonp: false,
 					jsonpCallback: "jsonMensagemEnviada",

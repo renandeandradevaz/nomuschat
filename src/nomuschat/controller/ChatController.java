@@ -50,15 +50,15 @@ public class ChatController {
 	}
 
 	@Funcionalidade
-	public void verificaExistenciaNovasMensagens(String login) {
+	public void verificaExistenciaNovasMensagens(String loginNomusChat) {
 
-		iniciaHashChat(login);
+		iniciaHashChat(loginNomusChat);
 
-		if (login.equals(this.sessaoUsuario.getUsuario().getLogin())) {
+		if (loginNomusChat.equals(this.sessaoUsuario.getUsuario().getLogin())) {
 
-			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagens").from(chat.get(login)).serialize();
+			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagens").from(chat.get(loginNomusChat)).serialize();
 
-			chat.get(login).clear();
+			chat.get(loginNomusChat).clear();
 		}
 	}
 
@@ -82,18 +82,18 @@ public class ChatController {
 	}
 
 	@Funcionalidade
-	public void exibirUsuariosLogados(String login, String empresa) {
+	public void exibirUsuariosLogados(String loginNomusChat, String empresa) {
 
-		if (!InterceptadorDeAutorizacao.getUsuariosLogados().containsKey(login)) {
+		if (!InterceptadorDeAutorizacao.getUsuariosLogados().containsKey(loginNomusChat)) {
 
-			InterceptadorDeAutorizacao.getUsuariosLogados().put(empresa + "_" + login, "");
+			InterceptadorDeAutorizacao.getUsuariosLogados().put(empresa + "_" + loginNomusChat, "");
 		}
 
 		List<String> usuariosLogados = new ArrayList<String>();
 
 		for (Entry<String, String> usuarioLogado : InterceptadorDeAutorizacao.getUsuariosLogados().entrySet()) {
 
-			if (!usuarioLogado.getKey().equals(login)) {
+			if (!usuarioLogado.getKey().equals(loginNomusChat)) {
 
 				usuariosLogados.add(usuarioLogado.getKey());
 			}
