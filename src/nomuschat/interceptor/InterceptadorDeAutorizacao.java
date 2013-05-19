@@ -1,10 +1,12 @@
 package nomuschat.interceptor;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import nomuschat.anotacoes.Funcionalidade;
 import nomuschat.anotacoes.Public;
 import nomuschat.controller.LoginController;
 import nomuschat.hibernate.HibernateUtil;
@@ -82,7 +84,17 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 					}
 
 					usuariosLogados.put(usuario.getLogin(), "");
-					stack.next(method, resourceInstance);
+
+					if (possuiPermissao(stack, method, resourceInstance, usuario)) {
+
+						stack.next(method, resourceInstance);
+					}
+
+					else {
+
+						permissaoNegada();
+						return;
+					}
 				}
 			}
 
@@ -94,8 +106,42 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 
 		else {
 
-			stack.next(method, resourceInstance);
+			if (possuiPermissao(stack, method, resourceInstance, sessaoUsuario.getUsuario())) {
+
+				stack.next(method, resourceInstance);
+			}
+
+			else {
+
+				permissaoNegada();
+				return;
+			}
 		}
+	}
+
+	private boolean possuiPermissao(InterceptorStack stack, ResourceMethod method, Object resourceInstance, Usuario usuario) {
+
+		Method metodo = method.getMethod();
+
+		if (metodo.isAnnotationPresent(Funcionalidade.class)) {
+
+			Funcionalidade anotacao = metodo.getAnnotation(Funcionalidade.class);
+
+			if (Util.preenchido(anotacao.administrativa())) {
+
+				if (usuario.getAdministrador()) {
+
+					return true;
+				}
+
+				else {
+
+					return false;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private void usuarioNaoLogadoNoSistema() {
@@ -111,6 +157,12 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 		hibernateUtil.fecharSessao();
 		result.include("errors", Arrays.asList(new ValidationMessage("Login ou senha incorretos", "Erro")));
 		result.redirectTo(LoginController.class).telaLogin();
+	}
+
+	private void permissaoNegada() {
+
+		hibernateUtil.fecharSessao();
+		result.redirectTo(LoginController.class).permissaoNegada();
 	}
 
 	public static HashMap<String, String> getUsuariosLogados() {
