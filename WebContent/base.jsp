@@ -40,12 +40,12 @@
 				        <li>
 				        	<a href="" class="parent"><span>Menu</span></a>
 				            <ul>
+				            	<li><a href="<c:url value="/chat/chat"/>"><span> Chat </span></a></li>
 				            	<c:if test="${sessaoUsuario.usuario.administrador}">
 					            	<li><a href="<c:url value="/usuario/listarUsuarios"/>"><span> Usuários </span></a></li>
 					            	<li><a href="<c:url value="/empresa/listarEmpresas"/>"><span> Empresas </span></a></li>
 					            	<li><a href="<c:url value="/configuracao/configuracoes"/>"><span> Configurações </span></a></li>
 				            	</c:if>
-				            	<li><a href="<c:url value="/chat/chat"/>"><span> Chat </span></a></li>
 				            </ul>
 				        </li>     
 				    </ul>

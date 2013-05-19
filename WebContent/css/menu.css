@@ -120,7 +120,7 @@ div#menu ul ul span {
     color: rgb(169,169,169);
 }
 div#menu ul ul a:hover span {
-    color: #fff;
+    color: #fff !important;
 }
 div#menu ul ul li.last { background: none; }
 div#menu ul ul li {
