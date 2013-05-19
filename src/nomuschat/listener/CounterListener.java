@@ -27,9 +27,8 @@ public final class CounterListener implements HttpSessionListener {
 
 			if (Util.preenchido(InterceptadorDeAutorizacao.getUsuariosLogados()) && Util.preenchido(sessaoUsuario) && Util.preenchido(sessaoUsuario.getUsuario()) && Util.preenchido(sessaoUsuario.getUsuario().getLogin())) {
 
-				InterceptadorDeAutorizacao.getUsuariosLogados().remove(sessaoUsuario.getUsuario().getLogin());
+				InterceptadorDeAutorizacao.getUsuariosLogados().remove(sessaoUsuario.getUsuario().getEmpresa().getNome() + "_" + sessaoUsuario.getUsuario().getLogin());
 			}
-
 		}
 
 		count--;
@@ -46,14 +45,14 @@ public final class CounterListener implements HttpSessionListener {
 	}
 
 	private void log(String message) {
-		if (context != null){
-			
-			//context.log("SessionListener: " + message);
+		if (context != null) {
+
+			// context.log("SessionListener: " + message);
 		}
-		
-		else{
-			
-			//System.out.println("SessionListener: " + message);
+
+		else {
+
+			// System.out.println("SessionListener: " + message);
 		}
 	}
 
