@@ -32,6 +32,11 @@ public class ChatController {
 	}
 
 	@Funcionalidade
+	public void chat() {
+
+	}
+
+	@Funcionalidade
 	public void recebeMensagem(String remetente, String destinatario, String mensagem) {
 
 		iniciaHashChat(destinatario);

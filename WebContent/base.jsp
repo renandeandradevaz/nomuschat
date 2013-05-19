@@ -10,15 +10,17 @@
 		<link type="text/css" href="<c:url value="/css/bootstrap-responsive.css"/>" rel="stylesheet" />
 		<link type="text/css" href="<c:url value="/css/estilo.css"/>" rel="stylesheet" />
 		<link type="text/css" href="<c:url value="/css/menu.css"/>" rel="stylesheet" />
-		<link type="text/css" href="<c:url value="/css/jquery-ui-1.9.2.custom.css"/>" rel="stylesheet" />
-		<script type="text/javascript" src="<c:url value="/js/jquery-1.7.2.min.js"/>"></script>
+		<link type="text/css" href="<c:url value="/css/jquery-ui-1.9.2.custom.min.css"/>" rel="stylesheet" />
+		<link type="text/css" href="<c:url value="/css/jquery.ui.chatbox.css"/>" rel="stylesheet" />
+		<script type="text/javascript" src="<c:url value="/js/jquery-1.9.1.js"/>"></script>
 		<script type="text/javascript" src="<c:url value="/js/jquery-ui-1.9.2.custom.min.js"/>"></script>
+		<script type="text/javascript" src="<c:url value="/js/jquery.ui.chatbox.js"/>"></script>
+		<script type="text/javascript" src="<c:url value="/js/chatboxManager.js"/>"></script>
 		<script type="text/javascript" src="<c:url value="/js/jquery.validate.js"/>"></script>
 		<script type="text/javascript" charset="utf-8" src="<c:url value="/js/scripts.gerais.js"/>"></script>			
 		<script type="text/javascript" src="<c:url value="/js/menu.js"/>"></script>
 		<script type="text/javascript" src="<c:url value="/js/submenu.js"/>"></script>
-		<script type="text/javascript" src="<c:url value="/js/form.requerido.js"/>"></script>	
-				
+		<script type="text/javascript" src="<c:url value="/js/form.requerido.js"/>"></script>		
 	</head>
 	
 	<noscript>
@@ -43,6 +45,7 @@
 					            	<li><a href="<c:url value="/empresa/listarEmpresas"/>"><span> Empresas </span></a></li>
 					            	<li><a href="<c:url value="/configuracao/configuracoes"/>"><span> Configurações </span></a></li>
 				            	</c:if>
+				            	<li><a href="<c:url value="/chat/chat"/>"><span> Chat </span></a></li>
 				            </ul>
 				        </li>     
 				    </ul>

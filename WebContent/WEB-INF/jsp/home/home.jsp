@@ -3,3 +3,16 @@
 
 <h3 style="text-align: center; margin-top: 40px;">  Bem vindo ${sessaoUsuario.usuario.nome}! </h3>
 
+
+<script>
+
+	setTimeout(redirecionarParaChat, 3000);
+	
+	function redirecionarParaChat(){
+		
+		window.location.href = '<c:url value="/chat/chat"/>';
+	}
+
+
+</script>
+

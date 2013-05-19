@@ -108,3 +108,27 @@ table:hover{
 		display: block !important;
 	}
 }
+
+
+#usuariosLogados{
+		
+	border: 1px solid #CCC;
+	width: 300px;
+	border-radius: 5px;
+}
+
+#usuariosLogados h5{
+
+	text-align: center;
+}
+
+#usuariosLogados li{
+
+	list-style-type: none;
+	cursor: pointer;
+}
+#usuariosLogados li:hover{
+
+	color: blue;
+	text-decoration: underline;
+}
