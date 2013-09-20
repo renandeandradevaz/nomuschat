@@ -8,8 +8,8 @@ import nomuschat.hibernate.HibernateUtil;
 import nomuschat.interceptor.InterceptadorDeAutorizacao;
 import nomuschat.modelo.Empresa;
 import nomuschat.modelo.Usuario;
+import nomuschat.seguranca.Criptografia;
 import nomuschat.sessao.SessaoUsuario;
-import nomuschat.util.GeradorDeMd5;
 import nomuschat.util.Util;
 
 import org.hibernate.criterion.MatchMode;
@@ -23,7 +23,7 @@ import br.com.caelum.vraptor.validator.ValidationMessage;
 @Resource
 public class LoginController {
 
-	private static final String HASH_SENHA_ADMINISTRADOR = "b9bde749700bd25648b0a3f2ecaa81c2";
+	private static final String HASH_SENHA_ADMINISTRADOR = "e51c96aa97b9562d06b3f8031fc6af58";
 
 	private final Result result;
 	private SessaoUsuario sessaoUsuario;
@@ -41,6 +41,7 @@ public class LoginController {
 	@Path("/")
 	public void telaLogin() {
 
+		result.include("empresas", this.hibernateUtil.buscar(new Empresa()));
 	}
 
 	@Public
@@ -54,7 +55,7 @@ public class LoginController {
 
 	private void verificaExistenciaAdministrador(Usuario usuario) {
 
-		if (usuario.getLogin().equals("administrador") && GeradorDeMd5.converter(usuario.getSenha()).equals(HASH_SENHA_ADMINISTRADOR)) {
+		if (usuario.getLogin().equals("administrador") && new Criptografia().criptografaSenha(usuario.getSenha()).equals(HASH_SENHA_ADMINISTRADOR)) {
 
 			Usuario usuarioFiltro = new Usuario();
 			usuarioFiltro.setLogin("administrador");
@@ -78,21 +79,30 @@ public class LoginController {
 
 	private void tentarEfetuarLogin(Usuario usuario) {
 
-		usuario.setSenha(GeradorDeMd5.converter(usuario.getSenha()));
+		if (Util.vazio(usuario.getLogin())) {
 
-		Usuario usuarioBanco = null;
-
-		if (Util.preenchido(usuario.getLogin())) {
-
-			Usuario usuarioFiltro = new Usuario();
-			usuarioFiltro.setLogin(usuario.getLogin());
-
-			usuarioBanco = hibernateUtil.selecionar(usuarioFiltro, MatchMode.EXACT);
+			validator.add(new ValidationMessage("Login requerido", "Erro"));
 		}
 
-		if (Util.vazio(usuarioBanco) || !usuarioBanco.getSenha().equals(usuario.getSenha())) {
+		if (Util.vazio(usuario.getSenha())) {
 
-			validator.add(new ValidationMessage("Login ou senha incorretos", "Erro"));
+			validator.add(new ValidationMessage("Senha requerida", "Erro"));
+		}
+
+		if (Util.vazio(usuario.getEmpresa().getId())) {
+
+			validator.add(new ValidationMessage("Empresa requerida", "Erro"));
+		}
+
+		validator.onErrorRedirectTo(this).telaLogin();
+
+		usuario.setSenha(new Criptografia().criptografaSenha(usuario.getSenha()));
+
+		usuario = hibernateUtil.selecionar(usuario, MatchMode.EXACT);
+
+		if (Util.vazio(usuario)) {
+
+			validator.add(new ValidationMessage("Combinação login, senha, empresa incorretos", "Erro"));
 		}
 
 		validator.onErrorRedirectTo(this).telaLogin();
@@ -100,7 +110,18 @@ public class LoginController {
 
 	private void colocarUsuarioNaSessao(Usuario usuario) {
 
-		this.sessaoUsuario.login((Usuario) this.hibernateUtil.selecionar(usuario, MatchMode.EXACT));
+		usuario = this.hibernateUtil.selecionar(usuario, MatchMode.EXACT);
+
+		usuario.setKeyEmpresaUsuario(usuario.getEmpresa().getNome() + "_" + usuario.getLogin());
+
+		this.sessaoUsuario.login(usuario);
+
+		if (InterceptadorDeAutorizacao.getUsuariosLogados() == null) {
+
+			InterceptadorDeAutorizacao.setUsuariosLogados(new HashMap<String, Usuario>());
+		}
+
+		InterceptadorDeAutorizacao.getUsuariosLogados().put(usuario.getKeyEmpresaUsuario(), usuario);
 	}
 
 	@Public
@@ -132,14 +153,14 @@ public class LoginController {
 
 		Usuario usuario = hibernateUtil.selecionar(new Usuario(sessaoUsuario.getUsuario().getId()));
 
-		if (!GeradorDeMd5.converter(senhaAntiga).equals(usuario.getSenha())) {
+		if (!new Criptografia().criptografaSenha(senhaAntiga).equals(usuario.getSenha())) {
 
 			validator.add(new ValidationMessage("Senha antiga incorreta", "Erro"));
 
 			validator.onErrorRedirectTo(this).trocarPropriaSenha();
 		}
 
-		usuario.setSenha(GeradorDeMd5.converter(senhaNova));
+		usuario.setSenha(new Criptografia().criptografaSenha(senhaNova));
 
 		hibernateUtil.salvarOuAtualizar(usuario);
 
@@ -170,6 +191,13 @@ public class LoginController {
 		if (Util.vazio(login) || Util.vazio(senha) || Util.vazio(nomeEmpresa)) {
 
 			result.include("errors", Arrays.asList(new ValidationMessage("Necessário informar login, senha e empresa para entrar no chat", "Erro")));
+			result.redirectTo(this).telaLogin();
+			return;
+		}
+
+		if (login.equals("administrador")) {
+
+			result.include("errors", Arrays.asList(new ValidationMessage("Administrador não se loga no chat", "Erro")));
 			result.redirectTo(this).telaLogin();
 			return;
 		}
@@ -211,6 +239,7 @@ public class LoginController {
 				usuario.setNome(nome);
 				usuario.setAdministrador(false);
 				this.hibernateUtil.salvarOuAtualizar(usuario);
+				usuarioBanco = usuario;
 			}
 
 			else {
@@ -227,7 +256,9 @@ public class LoginController {
 			usuarioLogado = usuarioBanco;
 		}
 
-		this.sessaoUsuario.login((Usuario) usuarioLogado);
+		usuarioLogado.setKeyEmpresaUsuario(usuarioLogado.getEmpresa().getNome() + "_" + usuarioLogado.getLogin());
+
+		this.sessaoUsuario.login(usuarioLogado);
 
 		if (InterceptadorDeAutorizacao.getUsuariosLogados() == null) {
 

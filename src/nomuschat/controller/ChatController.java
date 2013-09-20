@@ -9,6 +9,7 @@ import nomuschat.anotacoes.Funcionalidade;
 import nomuschat.auxiliar.ChatAuxiliar;
 import nomuschat.hibernate.HibernateUtil;
 import nomuschat.interceptor.InterceptadorDeAutorizacao;
+import nomuschat.modelo.Configuracao;
 import nomuschat.modelo.Usuario;
 import nomuschat.sessao.SessaoUsuario;
 import nomuschat.util.Util;
@@ -35,16 +36,44 @@ public class ChatController {
 	@Funcionalidade
 	public void chat() {
 
+		result.include("enderecochat", new Configuracao().retornarConfiguracao("enderecochat"));
 	}
 
 	@Funcionalidade
 	public void recebeMensagem(String destinatario, String mensagem) {
 
+		mensagem = substituirCaracteresEspeciais(mensagem);
+
 		iniciaHashChat();
+
+		destinatario = destinatario.replace("\\", "");
 
 		chat.get(destinatario).add(new ChatAuxiliar(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario(), mensagem, this.sessaoUsuario.getUsuario().getEmpresa().getNome(), this.sessaoUsuario.getUsuario().getNome()));
 
 		result.use(Results.jsonp()).withCallback("jsonMensagemEnviada").from("ok").serialize();
+	}
+
+	private String substituirCaracteresEspeciais(String mensagem) {
+
+		if (Util.preenchido(mensagem)) {
+
+			if (mensagem.contains("!!!tralha!!!")) {
+
+				mensagem = mensagem.replaceAll("!!!tralha!!!", "#");
+			}
+
+			if (mensagem.contains("!!!porcentagem!!!")) {
+
+				mensagem = mensagem.replaceAll("!!!porcentagem!!!", "%");
+			}
+
+			if (mensagem.contains("!!!mais!!!")) {
+
+				mensagem = mensagem.replaceAll("!!!mais!!!", "+");
+			}
+		}
+
+		return mensagem;
 	}
 
 	@Funcionalidade
@@ -70,7 +99,7 @@ public class ChatController {
 
 		else {
 
-			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagensSemDevolverJsonComMensagens").from(true).serialize();
+			result.use(Results.jsonp()).withCallback("jsonVerificacaoExistenciaNovasMensagensSemDevolverJsonComMensagens").from(false).serialize();
 		}
 
 	}
@@ -87,15 +116,13 @@ public class ChatController {
 
 		for (Entry<String, Usuario> usuarioLogado : InterceptadorDeAutorizacao.getUsuariosLogados().entrySet()) {
 
-			// if
-			// (!usuarioLogado.getKey().equals(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario()))
-			// {
+			if (!usuarioLogado.getKey().equals(this.sessaoUsuario.getUsuario().getKeyEmpresaUsuario())) {
 
-			usuariosLogados.add(usuarioLogado.getValue());
-			// }
+				usuariosLogados.add(usuarioLogado.getValue());
+			}
 		}
 
-		result.use(Results.jsonp()).withCallback("jsonUsuariosLogados").from(usuariosLogados).include("empresa").serialize();
+		result.use(Results.jsonp()).withCallback("jsonUsuariosLogados").from(usuariosLogados).include("empresa").exclude("senha").serialize();
 	}
 
 	private void iniciaHashChat() {

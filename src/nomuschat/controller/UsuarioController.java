@@ -6,8 +6,8 @@ import nomuschat.anotacoes.Funcionalidade;
 import nomuschat.hibernate.HibernateUtil;
 import nomuschat.modelo.Empresa;
 import nomuschat.modelo.Usuario;
+import nomuschat.seguranca.Criptografia;
 import nomuschat.sessao.SessaoGeral;
-import nomuschat.util.GeradorDeMd5;
 import nomuschat.util.Util;
 import nomuschat.util.UtilController;
 
@@ -91,9 +91,9 @@ public class UsuarioController {
 
 		if (Util.vazio(sessaoGeral.getValor("idUsuario"))) {
 
-			validarNomesRepetidos(usuario);
+			validar(usuario);
 
-			usuario.setSenha(GeradorDeMd5.converter(usuario.getSenha()));
+			usuario.setSenha(new Criptografia().criptografaSenha(usuario.getSenha()));
 		}
 
 		else {
@@ -102,7 +102,7 @@ public class UsuarioController {
 
 			if (!usuario.getLogin().equals(usuarioselecionado.getLogin())) {
 
-				validarNomesRepetidos(usuario);
+				validar(usuario);
 			}
 
 			usuario.setId((Integer) sessaoGeral.getValor("idUsuario"));
@@ -114,13 +114,29 @@ public class UsuarioController {
 		result.redirectTo(this).listarUsuarios(new Usuario(), null);
 	}
 
-	private void validarNomesRepetidos(Usuario usuario) {
+	private void validar(Usuario usuario) {
+
+		if (Util.vazio(usuario.getLogin())) {
+
+			validator.add(new ValidationMessage("Login requerido", "Erro"));
+		}
+
+		if (Util.vazio(usuario.getSenha())) {
+
+			validator.add(new ValidationMessage("Senha requerida", "Erro"));
+		}
+
+		if (Util.vazio(usuario.getEmpresa().getId())) {
+
+			validator.add(new ValidationMessage("Empresa requerida", "Erro"));
+		}
 
 		Usuario usuarioFiltro = new Usuario();
 		usuarioFiltro.setLogin(usuario.getLogin());
+		usuarioFiltro.setEmpresa(usuario.getEmpresa());
 
 		if (Util.preenchido(hibernateUtil.buscar(usuarioFiltro, MatchMode.EXACT))) {
-			validator.add(new ValidationMessage("Já existe um usuario com este login", "Erro"));
+			validator.add(new ValidationMessage("Já existe um usuario com este login nesta empresa", "Erro"));
 		}
 
 		validator.onErrorForwardTo(this).criarEditarUsuario();
@@ -160,7 +176,7 @@ public class UsuarioController {
 
 		Usuario usuario = hibernateUtil.selecionar(new Usuario((Integer) this.sessaoGeral.getValor("idUsuario")));
 
-		usuario.setSenha(GeradorDeMd5.converter(senha));
+		usuario.setSenha(new Criptografia().criptografaSenha(senha));
 
 		hibernateUtil.salvarOuAtualizar(usuario);
 

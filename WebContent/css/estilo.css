@@ -113,8 +113,12 @@ table:hover{
 #usuariosLogados{
 		
 	border: 1px solid #CCC;
-	width: 300px;
+	width: 400px;
 	border-radius: 5px;
+	max-height: 500px;
+	min-height: 200px;	
+	overflow-y: auto;
+	box-shadow: 4px 4px 4px #888;
 }
 
 #usuariosLogados h5{
@@ -125,10 +129,21 @@ table:hover{
 #usuariosLogados li{
 
 	list-style-type: none;
-	cursor: pointer;
 }
-#usuariosLogados li:hover{
+
+#usuariosLogados .usuario{
+
+	cursor: pointer;
+	font-weight: normal;
+}
+#usuariosLogados .usuario:hover{
 
 	color: blue;
 	text-decoration: underline;
+}
+
+#usuariosLogados .empresa{
+
+	margin-top: 15px;
+	font-weight: bold;
 }

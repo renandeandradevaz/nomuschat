@@ -38,6 +38,10 @@
         margin-bottom: 15px;
         padding: 7px 9px;
       }
+      
+      .empresas{
+      	width: 100%;
+      }
 
     </style>
 	
@@ -55,9 +59,16 @@
 	
 	      <form class="form-signin" action="<c:url value="/login/efetuarLogin"/>" method="post" >
 	        <h3 class="form-signin-heading"> Login </h3>
-	        <input type="text" class="input-block-level" placeholder="Usuario" name="usuario.login" >
+	        <input type="text" class="input-block-level" placeholder="Usuario" name="usuario.login" autofocus="autofocus"  >
 	        <input type="password" class="input-block-level" placeholder="Senha" name="usuario.senha" >
 	        
+	       	<select class="empresas" name="usuario.empresa.id" >
+				<option value="" style='display:none;' >Empresa</option>
+				<c:forEach items="${empresas}" var="item">
+					<option value="${item.id}"> ${item.nome} </option>
+				</c:forEach>
+			</select>
+
 	        <br> <br> 
 	        
 	        <button class="btn btn-large btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" >Entrar</button>

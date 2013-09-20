@@ -23,6 +23,7 @@ public class AnaliseController {
 	@Path("/analise")
 	public void analisar() {
 
+		result.include("ultimaAtualizacaoSistema", "17/07/2013 10:00");
 		result.include("sessoesTomcat", CounterListener.getCount());
 		result.include("quantidadeUsuariosOnline", InterceptadorDeAutorizacao.getUsuariosLogados().size());
 

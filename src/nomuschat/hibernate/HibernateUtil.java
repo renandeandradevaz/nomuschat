@@ -4,6 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import nomuschat.modelo.Configuracao;
+import nomuschat.util.Util;
+import nomuschat.util.UtilReflection;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,9 +19,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import nomuschat.modelo.Configuracao;
-import nomuschat.util.Util;
-import nomuschat.util.UtilReflection;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.ioc.Component;
 import br.com.caelum.vraptor.ioc.RequestScoped;
@@ -26,7 +27,7 @@ import br.com.caelum.vraptor.ioc.RequestScoped;
 @RequestScoped
 public class HibernateUtil {
 
-	private static SessionFactory sessionFactory;
+	public static SessionFactory sessionFactory;
 	private Session session;
 	private Result result;
 
@@ -43,17 +44,23 @@ public class HibernateUtil {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	private void iniciarSessionFactory() {
 
 		if (sessionFactory == null) {
 
-			Configuration configuration = new Configuration();
-
-			configuration.setNamingStrategy(new ImprovedNamingStrategy());
-
-			sessionFactory = configuration.configure().buildSessionFactory();
+			reiniciarSessionFactory();
+			ThreadRestartHibernate.iniciarThread();
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void reiniciarSessionFactory() {
+
+		Configuration configuration = new Configuration();
+
+		configuration.setNamingStrategy(new ImprovedNamingStrategy());
+
+		sessionFactory = configuration.configure().buildSessionFactory();
 	}
 
 	public void fecharSessao() {
@@ -324,7 +331,7 @@ public class HibernateUtil {
 		Long quantidadeRegistros = (Long) criteria.uniqueResult();
 
 		criteria = gerarFiltros(filtro, matchMode);
-		Integer quantidadeDeRegistrosPorPagina = Integer.valueOf(new Configuracao().retornarConfiguracao("quantidadeRegistrosPorPagina", this));
+		Integer quantidadeDeRegistrosPorPagina = Integer.valueOf(new Configuracao().retornarConfiguracao("quantidadeRegistrosPorPagina"));
 		if (pagina == null) {
 			pagina = 1;
 		}

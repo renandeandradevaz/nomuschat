@@ -63,6 +63,12 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 				return;
 			}
 
+			if (login.equals("administrador")) {
+
+				usuarioNaoLogadoNoSistema();
+				return;
+			}
+
 			Usuario usuarioLogado = null;
 
 			Empresa empresa = new Empresa();
@@ -100,6 +106,7 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 					usuario.setNome(nome);
 					usuario.setAdministrador(false);
 					this.hibernateUtil.salvarOuAtualizar(usuario);
+					usuarioBanco = usuario;
 				}
 
 				else {
@@ -111,10 +118,12 @@ public class InterceptadorDeAutorizacao implements Interceptor {
 					}
 				}
 
-				usuarioLogado = usuario;
+				usuarioLogado = usuarioBanco;
 			}
 
-			this.sessaoUsuario.login((Usuario) usuarioLogado);
+			usuarioLogado.setKeyEmpresaUsuario(usuarioLogado.getEmpresa().getNome() + "_" + usuarioLogado.getLogin());
+
+			this.sessaoUsuario.login(usuarioLogado);
 
 			if (usuariosLogados == null) {
 

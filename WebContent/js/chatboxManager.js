@@ -72,8 +72,8 @@ var chatboxManager = function() {
 	else if(idx2 != -1) {
 	    // exists, but hidden
 	    // show it and put it back to showList
-	    $("#"+id).chatbox("option", "offset", getNextOffset());
-	    var manager = $("#"+id).chatbox("option", "boxManager");
+	    $("#"+id.replace(".", "\\.")).chatbox("option", "offset", getNextOffset());
+	    var manager = $("#"+id.replace(".", "\\.")).chatbox("option", "boxManager");
 	    manager.toggleBox();
 	    showList.push(id);
 	}

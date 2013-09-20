@@ -1,3 +1,5 @@
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -5,6 +7,7 @@
 <html lang="pt-br">
 	<head>
 		<title> Nomus Chat </title>
+		<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 		<link type="text/css" href="<c:url value="/css/bootstrap.css"/>" rel="stylesheet" />
 		<link type="text/css" href="<c:url value="/css/bootstrap-alterado.css"/>" rel="stylesheet" />
 		<link type="text/css" href="<c:url value="/css/bootstrap-responsive.css"/>" rel="stylesheet" />
@@ -42,9 +45,9 @@
 				            <ul>
 				            	<li><a href="<c:url value="/chat/chat"/>"><span> Chat </span></a></li>
 				            	<c:if test="${sessaoUsuario.usuario.administrador}">
-					            	<li><a href="<c:url value="/usuario/listarUsuarios"/>"><span> Usuários </span></a></li>
+					            	<li><a href="<c:url value="/usuario/listarUsuarios"/>"><span> UsuÃ¡rios </span></a></li>
 					            	<li><a href="<c:url value="/empresa/listarEmpresas"/>"><span> Empresas </span></a></li>
-					            	<li><a href="<c:url value="/configuracao/configuracoes"/>"><span> Configurações </span></a></li>
+					            	<li><a href="<c:url value="/configuracao/configuracoes"/>"><span> ConfiguraÃ§Ãµes </span></a></li>
 				            	</c:if>
 				            </ul>
 				        </li>     

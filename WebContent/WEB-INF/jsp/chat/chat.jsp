@@ -1,12 +1,10 @@
 <%@ include file="/base.jsp" %> 
 
-<form id="formNomusChat" method="post" action="http://localhost:8080/nomuschat/login/loginVindoDoPCP" target="novaAbaNomusChat" style="display: none" >
-	<input type="hidden" id='loginNomusChat' name="loginNomusChat" value="renan" />
-	<input type="hidden" id='senhaNomusChat' name="senhaNomusChat" value="1234" />
-	<input type="hidden" id="nomeNomusChat" name="nomeNomusChat" value="Renan Vaz" />
-	<input type="hidden" id="nomeEmpresaNomusChat" name="nomeEmpresaNomusChat" value="Projetec" />
-	<input type="hidden" id="enderecoNomusChat" name="enderecoNomusChat" value="http://localhost:8080/nomuschat" />
-</form>
+<input type="hidden" id='loginNomusChat' name="loginNomusChat" value="${sessaoUsuario.usuario.login}" />
+<input type="hidden" id='senhaNomusChat' name="senhaNomusChat" value="${sessaoUsuario.usuario.senha}" />
+<input type="hidden" id="nomeNomusChat" name="nomeNomusChat" value="${sessaoUsuario.usuario.nome}" />
+<input type="hidden" id="nomeEmpresaNomusChat" name="nomeEmpresaNomusChat" value="${sessaoUsuario.usuario.empresa.nome}" />
+<input type="hidden" id="enderecoNomusChat" name="enderecoNomusChat" value="${enderecochat}" />
 
 <div id='usuariosLogados'>
 	<h5> Usuários online </h5>  
@@ -15,7 +13,20 @@
 
 <script type="text/javascript">
 
+	window_focus = true;
+	intervaloPiscarMensagem = setInterval(piscarMensagem, 3000);
+	remetenteGlobal = '';
+
 	jQuery(document).ready(function(){
+		
+		jQuery(window).focus(function() {
+		    window_focus = true;
+		    jQuery("title").text("Nomus Chat");
+		    remetenteGlobal = '';
+		}).blur(function() {
+		    window_focus = false;
+		    remetenteGlobal = '';
+		});
     	
 		if(navigator.appName != 'Microsoft Internet Explorer'){
     	
@@ -26,9 +37,11 @@
     		enderecoNomusChat = jQuery("#enderecoNomusChat").val();
 		    
 		    var broadcastMessageCallback = function(nomeDestinatario, codigoDestinatario, msg) {
-		        
-		    jQuery("#chat"+codigoDestinatario).chatbox("option", "boxManager").addMsg(nomeDestinatario, msg);
-		
+		    	
+			    jQuery("#chat"+codigoDestinatario.replace(".", "\\.")).chatbox("option", "boxManager").addMsg(nomeNomusChat, msg);
+			    
+			    msg = substituirCaracteresEspeciaisAntesDeEnviarMensagem(msg);
+			
 				jQuery.ajax({ 
 			        type: 'GET',
 			        url: enderecoNomusChat + "/chat/recebeMensagem?loginNomusChat=" + loginNomusChat + "&senhaNomusChat="+ senhaNomusChat + "&nomeNomusChat="+ nomeNomusChat + "&nomeEmpresaNomusChat="+ nomeEmpresaNomusChat + "&destinatario=" + codigoDestinatario + "&mensagem="+ msg,
@@ -44,15 +57,16 @@
 	
 			exibirUsuariosLogados();
 	
-			intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 1000);
-			setInterval(exibirUsuariosLogados, 10000);
+			intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 5000);
+			setInterval(exibirUsuariosLogados, 300000);
 
-			jQuery(document).on('click', '#usuariosLogados li', function(){  
+			jQuery(document).on('click', '#usuariosLogados .usuario', function(){  
 				
 				var keyRemetente = jQuery(this).attr("id");
 				var nomeRemetente = jQuery(this).text();
 				
 				chatboxManager.addBox("chat"+keyRemetente, {dest: keyRemetente, title: '' , first_name: nomeRemetente, last_name: '' });
+				jQuery(".ui-chatbox-input-box:last").focus();
 			});
     	}
     	
@@ -62,6 +76,26 @@
     	}
  
 	});
+	
+	function substituirCaracteresEspeciaisAntesDeEnviarMensagem(string){
+		
+		while (string.indexOf("#") != -1) {
+			
+	 		string = string.replace("#", "!!!tralha!!!");
+		}
+		
+		while (string.indexOf("%") != -1) {
+			
+	 		string = string.replace("%", "!!!porcentagem!!!");
+		}
+		
+		while (string.indexOf("+") != -1) {
+			
+	 		string = string.replace("+", "!!!mais!!!");
+		}
+		
+		return string;
+	}
     
     function exibirUsuariosLogados(){
 		
@@ -74,17 +108,59 @@
 	        success: function(data) { 
 	        	
 	        	jQuery("#usuariosLogados ul").empty();
-	        	
-	            jQuery.each(data.list, function(i, item){
 
-	               jQuery("#usuariosLogados ul").append("<li>");
-	               jQuery("#usuariosLogados li:last").attr("id", item.empresa.nome + "_" + item.login);
-	               jQuery("#usuariosLogados li:last").append(item.nome);
+	        	var empresas = {};
+	        	var nomesUsuarios = {};
 
+	        	jQuery.each(data.list, function(i, item){
+
+	            	if(empresas[item.empresa.nome] === undefined){
+
+		        		empresas[item.empresa.nome] = new Array();
+	            	}
+
+	        		empresas[item.empresa.nome].push(item.login);
+	        		nomesUsuarios[item.keyEmpresaUsuario] = item.nome;
 	 	    	});
+	        	
+	        	for (var keyEmpresa in empresas) {
+	        		
+	        		jQuery("#usuariosLogados ul").append("<li>");
+	        		jQuery("#usuariosLogados li:last").addClass("empresa");
+		            jQuery("#usuariosLogados li:last").text(keyEmpresa);
+		            jQuery("#usuariosLogados li:last").append("<ul>");
+
+	        		for (var keyUsuario in empresas[keyEmpresa]) {
+
+	        			jQuery("#usuariosLogados ul:last").append("<li>");
+	            		jQuery("#usuariosLogados li:last").addClass("usuario");
+	            		jQuery("#usuariosLogados li:last").text(nomesUsuarios[keyEmpresa + "_" + empresas[keyEmpresa][keyUsuario]]);
+	            		jQuery("#usuariosLogados li:last").attr("id", keyEmpresa + "_" + empresas[keyEmpresa][keyUsuario]);
+	        		}
+	        	}
 	        }
 	    });	    
 	}
+    
+    function piscarMensagem(){
+    	
+    	if(window_focus || remetenteGlobal == ''){
+    		
+    		jQuery("title").text("Nomus Chat");    		
+    	}
+    	
+    	else{
+    		
+	    	if(jQuery("title").text() == 'Nomus Chat'){
+	    		
+	    		jQuery("title").text(remetenteGlobal + " diz:");
+	    	}
+	    	else{
+	    		
+	    		jQuery("title").text("Nomus Chat");
+	    	}
+    	}
+    }
     
     function verificaExistenciaNovasMensagens(){
 		
@@ -98,8 +174,14 @@
 	            jQuery.each(data.list, function(i, item){
 
 	               chatboxManager.addBox("chat"+item.remetente, {dest: item.remetente, title: '' , first_name: item.nome, last_name: '' });
-	               jQuery("#chat"+item.remetente).chatbox("option", "boxManager").addMsg(item.nome, item.mensagem);
-
+	               jQuery("#chat"+item.remetente.replace(".", "\\.")).chatbox("option", "boxManager").addMsg(item.nome, item.mensagem);
+	               
+	               remetenteGlobal = item.nome;
+	               
+	               clearInterval(intervaloPiscarMensagem);
+	               piscarMensagem();
+	               intervaloPiscarMensagem = setInterval(piscarMensagem, 3000);
+	               
 	 	    	});
 	        }
 	    });
@@ -119,11 +201,11 @@
 	    
 	    if(existePeloMenosUmChatAberto){
 	    	
-		    intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 1000);
+		    intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 10000);
 	    }
 	    else{
 	    	
-	    	intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 10000);
+	    	intervaloVerificacaoExistenciaNovasMensagens = setInterval(verificaExistenciaNovasMensagens, 30000);
 	    }	    
 	} 
 </script>

@@ -27,11 +27,14 @@ public class Configuracao implements Entidade {
 		HashMap<String, String> configuracoesPadroes = new HashMap<String, String>();
 
 		configuracoesPadroes.put("quantidadeRegistrosPorPagina", "10");
+		configuracoesPadroes.put("enderecochat", "http://www.nomus.com.br:2428/nomuschat");
 
 		return configuracoesPadroes;
 	}
 
-	public String retornarConfiguracao(String chave, HibernateUtil hibernateUtil) {
+	public String retornarConfiguracao(String chave) {
+
+		HibernateUtil hibernateUtil = new HibernateUtil();
 
 		Configuracao configuracao = new Configuracao();
 		configuracao.setChave(chave);
@@ -42,6 +45,8 @@ public class Configuracao implements Entidade {
 
 			return configuracoesPadroes().get(chave);
 		}
+
+		hibernateUtil.fecharSessao();
 
 		return configuracao.getValor();
 	}

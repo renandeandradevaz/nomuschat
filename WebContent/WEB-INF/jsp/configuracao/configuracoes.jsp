@@ -10,6 +10,13 @@
         <input type="text" class="input-medium required numero-inteiro" name="configuracoes(quantidadeRegistrosPorPagina)" value="${configuracoes.get('quantidadeRegistrosPorPagina')}">
       </div>
     </div>
+    
+    <div class="control-group warning">
+      <label class="control-label configuracao">Endereço do chat</label>
+      <div class="controls">
+        <input type="text" class="input-xlarge required" name="configuracoes(enderecochat)" value="${configuracoes.get('enderecochat')}">
+      </div>
+    </div>
 
 	<br><br>
     <button type="submit" class="btn btn-primary">Salvar</button>

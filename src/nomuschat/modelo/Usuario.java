@@ -5,6 +5,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import nomuschat.hibernate.Entidade;
@@ -31,6 +32,9 @@ public class Usuario implements Entidade {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Empresa empresa;
 
+	@Transient
+	private String keyEmpresaUsuario;
+
 	public Usuario() {
 
 	}
@@ -38,35 +42,6 @@ public class Usuario implements Entidade {
 	public Usuario(Integer id) {
 
 		this.setId(id);
-	}
-
-	public String getKeyEmpresaUsuario() {
-
-		return this.empresa.getNome() + "_" + this.getLogin();
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public Empresa getEmpresa() {
-		return empresa;
-	}
-
-	public void setEmpresa(Empresa empresa) {
-		this.empresa = empresa;
 	}
 
 	public Integer getId() {
@@ -77,12 +52,28 @@ public class Usuario implements Entidade {
 		this.id = id;
 	}
 
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
 	public String getNome() {
 		return nome;
 	}
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 
 	public Boolean getAdministrador() {
@@ -92,4 +83,21 @@ public class Usuario implements Entidade {
 	public void setAdministrador(Boolean administrador) {
 		this.administrador = administrador;
 	}
+
+	public Empresa getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
+	}
+
+	public String getKeyEmpresaUsuario() {
+		return keyEmpresaUsuario;
+	}
+
+	public void setKeyEmpresaUsuario(String keyEmpresaUsuario) {
+		this.keyEmpresaUsuario = keyEmpresaUsuario;
+	}
+
 }
